@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 23,
+  "summary": "ICP canister-based e-commerce storefront template with Internet Identity authentication, role-based admin access, product catalog, cart and checkout pages, plus an admin dashboard for managing products, categories, and orders. Includes a reusable build template (React + shadcn/ui) and deployment tooling.",
+  "existing_features": [
+    {
+      "id": "IF-1",
+      "title": "Motoko backend canister (core app API)",
+      "synonyms": [
+        "backend canister",
+        "Motoko canister"
+      ],
+      "description": "Backend implemented in Motoko with main entrypoint and supporting modules, providing the core application API used by the frontend.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-2",
+      "title": "Authorization & access control mixins",
+      "synonyms": [
+        "RBAC",
+        "authorization module"
+      ],
+      "description": "Backend authorization modules (mixin-based) implementing access control checks for privileged operations.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-3",
+      "title": "Internet Identity authentication on frontend",
+      "synonyms": [
+        "II auth",
+        "Internet Identity login"
+      ],
+      "description": "Frontend authentication integration with Internet Identity including login UI and actor initialization hooks.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-4",
+      "title": "Role-based admin guard and access denied UX",
+      "synonyms": [
+        "AdminGuard",
+        "AccessDenied screen"
+      ],
+      "description": "Client-side route/feature gating for admin pages plus a dedicated access denied screen.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-5",
+      "title": "Profile setup modal",
+      "synonyms": [
+        "onboarding modal"
+      ],
+      "description": "Frontend modal flow to complete or configure user profile details after authentication.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-6",
+      "title": "Product catalog browsing",
+      "synonyms": [
+        "Catalog page",
+        "product listing"
+      ],
+      "description": "Catalog page with product cards and category filtering for browsing products.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-7",
+      "title": "Product details page",
+      "synonyms": [
+        "PDP"
+      ],
+      "description": "Dedicated page for viewing product details.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-8",
+      "title": "Cart state management and cart page",
+      "synonyms": [
+        "CartProvider",
+        "shopping cart"
+      ],
+      "description": "Cart provider/state management plus cart page UI.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-9",
+      "title": "Checkout page flow",
+      "synonyms": [
+        "checkout"
+      ],
+      "description": "Checkout page UI for completing orders from the cart.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-10",
+      "title": "Admin dashboard for categories, products, and orders",
+      "synonyms": [
+        "admin pages"
+      ],
+      "description": "Admin pages to manage categories and products, view orders list, and inspect order details.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-11",
+      "title": "Frontend app shell (header/footer) and state components",
+      "synonyms": [
+        "layout",
+        "loading/error states"
+      ],
+      "description": "Header/footer layout plus shared loading skeleton and error state components.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-12",
+      "title": "shadcn/ui component library integrated",
+      "synonyms": [
+        "UI kit"
+      ],
+      "description": "Bundled shadcn/ui components and Tailwind setup for building the UI.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-13",
+      "title": "Build template and deployment tooling",
+      "synonyms": [
+        "Dockerfile template",
+        "icp.yaml",
+        "deploy scripts"
+      ],
+      "description": "Build template including Dockerfile, ICP config, workspace/package configs, scripts for image processing, and deployment script.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-14",
+      "title": "Generated brand assets included",
+      "synonyms": [
+        "hero image",
+        "logo"
+      ],
+      "description": "Generated frontend public assets for hero and logo used by the app.",
+      "reqIds": [],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [],
+  "architectural_notes": [
+    "Frontend uses React + Vite + Tailwind + shadcn/ui for UI components and styling.",
+    "Authentication is handled via Internet Identity; frontend creates an authenticated actor to call the Motoko canister.",
+    "Backend authorization is centralized via mixin-based access control modules.",
+    "Project includes a reusable build/deploy template (Docker + ICP configs + scripts).",
+    "Build template includes custom ESLint rules to enforce Internet Identity provider usage and prevent BigInt usage in query keys.",
+    "Build template bundles extended shadcn/ui component set plus image maintenance scripts (resize/prune) as part of the reusable scaffold."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "generatedImages": [
+    {
+      "filename": "frontend/public/assets/generated/hanma-hero.dim_1600x600.png",
+      "description": "Generated hero/banner image asset for the storefront.",
+      "targetWidth": 1600,
+      "targetHeight": 600
+    },
+    {
+      "filename": "frontend/public/assets/generated/hanma-logo.dim_512x512.png",
+      "description": "Generated logo image asset for the storefront.",
+      "targetWidth": 512,
+      "targetHeight": 512
+    }
+  ],
+  "projectName": "Untitled request",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
