@@ -1,20 +1,36 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T10:00:08.410Z",
+  "generatedAt": "2026-02-05T11:52:09.265Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 0,
-    "implemented": 0,
-    "items": []
+    "total": 1,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Replace the homepage hero image with an updated version where only the food items (e.g., chicken and other foods) are more colorful and premium-looking, while keeping the website’s existing overall color scheme unchanged.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/assets/generated/hanma-hero-colorful-food.dim_1600x600.png",
+          "frontend/src/pages/HomePage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/HomePage.tsx"
+        ]
+      }
+    ]
   },
   "changedFiles": [
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/hanma-hero-colorful.dim_1600x600.png",
+    "frontend/src/pages/HomePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

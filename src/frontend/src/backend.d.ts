@@ -7,15 +7,6 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface Product {
-    id: ProductId;
-    categoryId?: CategoryId;
-    name: string;
-    description: string;
-    available: boolean;
-    imageUrl: string;
-    price: number;
-}
 export interface Category {
     id: CategoryId;
     name: string;
@@ -29,7 +20,7 @@ export interface OrderItem {
 export type CategoryId = number;
 export type ProductId = number;
 export interface Order {
-    id: OrderId;
+    id: number;
     customerName: string;
     customerAddress: string;
     totalAmount: number;
@@ -37,9 +28,17 @@ export interface Order {
     items: Array<OrderItem>;
     customerEmail: string;
 }
-export type OrderId = number;
 export interface UserProfile {
     name: string;
+}
+export interface Product {
+    id: ProductId;
+    categoryId?: CategoryId;
+    name: string;
+    description: string;
+    available: boolean;
+    imageUrl: string;
+    price: number;
 }
 export enum UserRole {
     admin = "admin",
@@ -47,15 +46,16 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    adminSeedInitialProducts(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCategory(name: string): Promise<CategoryId>;
-    createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<OrderId>;
+    createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<number>;
     createProduct(name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: CategoryId | null): Promise<ProductId>;
     deleteCategory(categoryId: CategoryId): Promise<void>;
     deleteProduct(productId: ProductId): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getOrderById(orderId: OrderId): Promise<Order | null>;
+    getOrderById(orderId: number): Promise<Order | null>;
     getProductById(productId: ProductId): Promise<Product | null>;
     getProductCatalog(): Promise<{
         categories: Array<Category>;

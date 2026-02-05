@@ -1,12 +1,52 @@
 {
   "kind": "build_request",
-  "title": "Untitled request",
+  "title": "Make homepage hero food imagery more colorful while preserving the existing site color scheme",
   "priority": "normal",
-  "requirements": [],
-  "constraints": [],
-  "nonGoals": [],
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Replace the homepage hero image with an updated version where only the food items (e.g., chicken and other foods) are more colorful and premium-looking, while keeping the website’s existing overall color scheme unchanged.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3",
+          "msg-6"
+        ],
+        "quotes": [
+          "make the intro picture colourful means the chicken and all foods colour ful and give my website a premium look only Change the colour of food not the website keep website the colour as it was."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Home page continues to render a hero image in the right-side media panel.",
+        "The hero image file used by the Home page is updated to the newly generated/edited asset in /assets/generated.",
+        "Only the food items in the hero image appear more vibrant/premium; the rest of the website theme/colors remain unchanged (no changes to Tailwind theme variables or global site color styling)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not change the website’s existing overall color scheme; only adjust the colors of the food items in the homepage intro/hero picture.",
+    "Do not edit any files under frontend/src/components/ui (read-only)."
+  ],
+  "nonGoals": [
+    "Creating a new admin dashboard (admin dashboard and product management already exist).",
+    "Changing global typography, Tailwind theme variables, or site-wide color tokens."
+  ],
   "imageRequirements": {
     "required": [],
-    "edits": []
+    "edits": [
+      "Increase vibrance/saturation and premium lighting/contrast on the food items only; keep background and overall palette unchanged (hanma-hero.dim_1600x600.png > hanma-hero-colorful.dim_1600x600.png)"
+    ]
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [
+      "User prefers a premium look while preserving the existing site color scheme; only food imagery should be made more colorful."
+    ],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

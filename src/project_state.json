@@ -1,185 +1,382 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 23,
-  "summary": "ICP canister-based e-commerce storefront template with Internet Identity authentication, role-based admin access, product catalog, cart and checkout pages, plus an admin dashboard for managing products, categories, and orders. Includes a reusable build template (React + shadcn/ui) and deployment tooling.",
+  "projectStateVersion": 3,
+  "summary": "Hanma store is a full-stack Internet Computer (ICP) storefront application. A Motoko canister backend exposes APIs for managing products, categories, customer orders, and per-user profiles, protected by role-based access control (admin/user/guest) bootstrapped via an environment-provided admin token. A React frontend (TanStack Router + React Query) provides a customer-facing shopping experience (home, catalog, product details, cart, checkout) and an admin portal (dashboard, product/category CRUD, order listing and details). Authentication is handled via Internet Identity, with an identity-aware actor lifecycle and UI guards for admin routes.",
   "existing_features": [
     {
       "id": "IF-1",
-      "title": "Motoko backend canister (core app API)",
+      "title": "Motoko canister backend for store domain entities",
       "synonyms": [
-        "backend canister",
-        "Motoko canister"
+        "backend actor API",
+        "canister data model"
       ],
-      "description": "Backend implemented in Motoko with main entrypoint and supporting modules, providing the core application API used by the frontend.",
+      "description": "Implements Product, Category, Order, and UserProfile types and stores them in in-memory Map collections with incrementing Nat32 IDs.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-2",
-      "title": "Authorization & access control mixins",
+      "title": "Role-based access control (admin/user/guest)",
       "synonyms": [
         "RBAC",
-        "authorization module"
+        "AccessControl"
       ],
-      "description": "Backend authorization modules (mixin-based) implementing access control checks for privileged operations.",
+      "description": "Provides role storage per principal and permission checks used across admin- and user-gated canister methods; anonymous principals are treated as guests.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-3",
-      "title": "Internet Identity authentication on frontend",
+      "title": "Admin bootstrap via secret token initialization",
       "synonyms": [
-        "II auth",
-        "Internet Identity login"
+        "CAFFEINE_ADMIN_TOKEN",
+        "_initializeAccessControlWithSecret"
       ],
-      "description": "Frontend authentication integration with Internet Identity including login UI and actor initialization hooks.",
+      "description": "Allows bootstrapping of an initial admin by comparing a user-provided secret to an environment variable token during initialization; non-matching principals become regular users.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-4",
-      "title": "Role-based admin guard and access denied UX",
+      "title": "Admin role assignment endpoint",
       "synonyms": [
-        "AdminGuard",
-        "AccessDenied screen"
+        "assignCallerUserRole",
+        "role management"
       ],
-      "description": "Client-side route/feature gating for admin pages plus a dedicated access denied screen.",
+      "description": "Exposes an admin-only method to assign roles to other principals.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-5",
-      "title": "Profile setup modal",
+      "title": "Product read/query APIs",
       "synonyms": [
-        "onboarding modal"
+        "getProductById",
+        "listAllProducts",
+        "listProductsByCategory"
       ],
-      "description": "Frontend modal flow to complete or configure user profile details after authentication.",
+      "description": "Supports retrieving a product by ID, listing all products, and listing products by category.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-6",
-      "title": "Product catalog browsing",
+      "title": "Product sorting by price API",
       "synonyms": [
-        "Catalog page",
-        "product listing"
+        "listAllProductsSortedByPrice"
       ],
-      "description": "Catalog page with product cards and category filtering for browsing products.",
+      "description": "Provides an endpoint that returns all products sorted by price.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-7",
-      "title": "Product details page",
+      "title": "Admin product CRUD",
       "synonyms": [
-        "PDP"
+        "createProduct",
+        "updateProduct",
+        "deleteProduct"
       ],
-      "description": "Dedicated page for viewing product details.",
+      "description": "Admin-gated endpoints to create, update, and delete products including price, image URL, availability, and optional category assignment.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-8",
-      "title": "Cart state management and cart page",
+      "title": "Category listing and admin category CRUD",
       "synonyms": [
-        "CartProvider",
-        "shopping cart"
+        "listAllCategories",
+        "createCategory",
+        "updateCategory",
+        "deleteCategory"
       ],
-      "description": "Cart provider/state management plus cart page UI.",
+      "description": "Public category listing plus admin-gated creation, updating, and deletion of categories.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-9",
-      "title": "Checkout page flow",
+      "title": "Unified product catalog API",
       "synonyms": [
-        "checkout"
+        "getProductCatalog",
+        "catalog endpoint"
       ],
-      "description": "Checkout page UI for completing orders from the cart.",
+      "description": "Returns both categories and products in a single response for efficient catalog page rendering.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-10",
-      "title": "Admin dashboard for categories, products, and orders",
+      "title": "Order creation API",
       "synonyms": [
-        "admin pages"
+        "createOrder",
+        "checkout submission"
       ],
-      "description": "Admin pages to manage categories and products, view orders list, and inspect order details.",
+      "description": "Creates orders containing line items, totals, and customer contact/delivery details with server-side timestamps.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-11",
-      "title": "Frontend app shell (header/footer) and state components",
+      "title": "Admin order viewing APIs",
       "synonyms": [
-        "layout",
-        "loading/error states"
+        "listAllOrders",
+        "getOrderById"
       ],
-      "description": "Header/footer layout plus shared loading skeleton and error state components.",
+      "description": "Admin-gated endpoints to list all orders and fetch a specific order by ID.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-12",
-      "title": "shadcn/ui component library integrated",
+      "title": "Admin seed of initial products",
       "synonyms": [
-        "UI kit"
+        "adminSeedInitialProducts",
+        "seed demo data"
       ],
-      "description": "Bundled shadcn/ui components and Tailwind setup for building the UI.",
+      "description": "Admin-only endpoint to populate default products when the product list is empty.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-13",
-      "title": "Build template and deployment tooling",
+      "title": "User profile read/write APIs",
       "synonyms": [
-        "Dockerfile template",
-        "icp.yaml",
-        "deploy scripts"
+        "getCallerUserProfile",
+        "saveCallerUserProfile",
+        "getUserProfile"
       ],
-      "description": "Build template including Dockerfile, ICP config, workspace/package configs, scripts for image processing, and deployment script.",
+      "description": "Allows authenticated users to read/save their own profile and allows admins to read other users’ profiles.",
       "reqIds": [],
       "version": 1
     },
     {
       "id": "IF-14",
-      "title": "Generated brand assets included",
+      "title": "Internet Identity authentication provider",
       "synonyms": [
-        "hero image",
-        "logo"
+        "AuthClient integration",
+        "InternetIdentityProvider"
       ],
-      "description": "Generated frontend public assets for hero and logo used by the app.",
+      "description": "Implements Internet Identity login/logout, identity rehydration on reload, and login status tracking via a React context.",
       "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-15",
+      "title": "Identity-aware backend actor lifecycle",
+      "synonyms": [
+        "useActor",
+        "anonymous vs authenticated actor"
+      ],
+      "description": "Creates an anonymous actor when logged out and an identity-backed actor when logged in; performs access-control initialization and invalidates/refetches queries when the actor changes.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-16",
+      "title": "React Query data access layer for canister APIs",
+      "synonyms": [
+        "useQueries",
+        "TanStack React Query hooks"
+      ],
+      "description": "Typed query/mutation hooks for products, categories, orders, admin checks, seeding, and user profiles with cache invalidation after mutations.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-17",
+      "title": "Customer storefront routing and layout",
+      "synonyms": [
+        "TanStack Router pages",
+        "Layout with Header/Footer"
+      ],
+      "description": "Defines routes for home, catalog, product details, cart, and checkout using a shared layout with header/footer.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-18",
+      "title": "Product catalog browsing with category filter UI",
+      "synonyms": [
+        "CatalogPage",
+        "CategoryFilter"
+      ],
+      "description": "Loads the unified catalog, renders categories as selectable filters, and filters products client-side by selected category.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-19",
+      "title": "Product details page with add-to-cart",
+      "synonyms": [
+        "ProductDetailsPage"
+      ],
+      "description": "Displays product image, price, description, and availability status, and supports adding available products to the cart.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-20",
+      "title": "Shopping cart context with persistence and cart page",
+      "synonyms": [
+        "CartProvider",
+        "localStorage cart"
+      ],
+      "description": "Implements add/remove/update quantity, derived totals, persistence to localStorage, and a cart UI with quantity controls and summary.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-21",
+      "title": "Checkout flow with safe empty-cart redirect and confirmation screen",
+      "synonyms": [
+        "CheckoutPage",
+        "order confirmation"
+      ],
+      "description": "Collects customer info, submits an order to the canister, clears the cart, shows an order confirmation, and redirects to the catalog via useEffect when cart is empty.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-22",
+      "title": "Admin route guard and access denied UX",
+      "synonyms": [
+        "AdminGuard",
+        "AccessDeniedScreen"
+      ],
+      "description": "Protects admin routes by requiring authentication and admin status; shows loading skeletons during checks and a clear access denied screen when unauthorized.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-23",
+      "title": "Conditional admin navigation",
+      "synonyms": [
+        "Header admin link"
+      ],
+      "description": "Shows an Admin Dashboard link in the header only for authenticated users who are admins, and adapts header content on admin routes.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-24",
+      "title": "Admin dashboard overview page",
+      "synonyms": [
+        "AdminDashboardPage"
+      ],
+      "description": "Displays summary stats for products, categories, and orders with quick links and getting-started guidance.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-25",
+      "title": "Admin product management UI",
+      "synonyms": [
+        "AdminProductsPage",
+        "product CRUD UI"
+      ],
+      "description": "Provides product listing and dialog-based create/edit forms, deletion controls, availability toggles, category assignment, and a seed-default-products action when empty.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-26",
+      "title": "Admin category management UI",
+      "synonyms": [
+        "AdminCategoriesPage",
+        "category CRUD UI"
+      ],
+      "description": "Lists categories in a table and supports create/edit via dialog forms and delete actions with confirmation.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-27",
+      "title": "Admin order management UI (list and details)",
+      "synonyms": [
+        "AdminOrdersPage",
+        "AdminOrderDetailsPage"
+      ],
+      "description": "Lists all orders with key fields and provides an order details view showing items, totals, timestamp, and customer information.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-28",
+      "title": "First-time profile setup modal",
+      "synonyms": [
+        "ProfileSetupModal",
+        "onboarding profile prompt"
+      ],
+      "description": "Prompts authenticated users without an existing profile to enter a display name and saves it via a backend mutation.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-29",
+      "title": "Reusable loading/error UI states and notifications",
+      "synonyms": [
+        "LoadingSkeleton",
+        "ErrorState",
+        "sonner toasts"
+      ],
+      "description": "Uses shared skeleton loaders, a consistent error component with retry, and toast notifications for user feedback across the app.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-homepage-hero-image-with-an-updated-version-where-only-the-food-items-e-g-chicken-and-other-foods-are-more-colorful-and-premium-looking-while-keeping-the-website-s-existing-overall-color-scheme-unchanged",
+      "title": "Replace the homepage hero image with an updated version where only the food items (e.g., chicken and other foods) are more colorful and premium-looking, while keeping the website’s existing overall color scheme unchanged.",
+      "reqIds": [
+        "REQ-1"
+      ],
       "version": 1
     }
   ],
-  "new_feature_requests": [],
-  "architectural_notes": [
-    "Frontend uses React + Vite + Tailwind + shadcn/ui for UI components and styling.",
-    "Authentication is handled via Internet Identity; frontend creates an authenticated actor to call the Motoko canister.",
-    "Backend authorization is centralized via mixin-based access control modules.",
-    "Project includes a reusable build/deploy template (Docker + ICP configs + scripts).",
-    "Build template includes custom ESLint rules to enforce Internet Identity provider usage and prevent BigInt usage in query keys.",
-    "Build template bundles extended shadcn/ui component set plus image maintenance scripts (resize/prune) as part of the reusable scaffold."
-  ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "generatedImages": [
+  "new_feature_requests": [
     {
-      "filename": "frontend/public/assets/generated/hanma-hero.dim_1600x600.png",
-      "description": "Generated hero/banner image asset for the storefront.",
-      "targetWidth": 1600,
-      "targetHeight": 600
-    },
-    {
-      "filename": "frontend/public/assets/generated/hanma-logo.dim_512x512.png",
-      "description": "Generated logo image asset for the storefront.",
-      "targetWidth": 512,
-      "targetHeight": 512
+      "id": "AR-1",
+      "summary": "Update the intro/hero picture to make only the food items (chicken and other foods) more colorful and premium-looking, while keeping the website’s existing overall color scheme unchanged.",
+      "reqIds": [],
+      "status": "pending"
     }
   ],
-  "projectName": "Untitled request",
+  "architectural_notes": [
+    "Backend is a single Motoko canister using in-memory mo:core/Map collections and incrementing Nat32 ID counters for products, categories, and orders.",
+    "Authorization is factored into a dedicated access-control module and included into the canister via a Motoko mixin (MixinAuthorization).",
+    "Admin bootstrap requires calling _initializeAccessControlWithSecret, which compares a user-supplied secret to CAFFEINE_ADMIN_TOKEN; the first matching principal becomes admin.",
+    "Frontend uses TanStack Router for routing and @tanstack/react-query for typed queries/mutations and cache invalidation.",
+    "Backend actor creation is centralized in a React Query-powered hook (useActor) that switches between anonymous and identity-backed actors and invalidates/refetches dependent queries on identity changes.",
+    "Internet Identity authentication is implemented via an AuthClient-backed React context provider with persisted identity rehydration on app mount.",
+    "Sensitive bootstrap token handling uses hash-fragment extraction with sessionStorage persistence and attempts to clear the secret from the URL.",
+    "Cart state is implemented as a React context provider with derived totals and localStorage persistence.",
+    "UI is built with Tailwind CSS + shadcn/ui components, with next-themes for light/dark theming and shared skeleton/error state components.",
+    "Admin pages are protected client-side by an AdminGuard that requires both an authenticated identity and isCallerAdmin() to succeed."
+  ],
+  "known_issues": [
+    "Canister state (products, categories, orders, user profiles, role assignments, and ID counters) is in-memory only and will be lost on canister upgrade/redeploy (no stable storage persistence).",
+    "getSecretParameter() only reads secrets from a simple hash fragment format (#key=value); it does not handle common hash-routing patterns like #/route?key=value, so admin token bootstrapping may be fragile depending on URL format.",
+    "_initializeAccessControlWithSecret traps if the CAFFEINE_ADMIN_TOKEN environment variable is not set, causing authenticated initialization to fail hard.",
+    "AccessControl.getUserRole traps with \"User is not registered\" for authenticated principals who have not been initialized/registered yet, which can break admin checks if initialization is skipped or fails.",
+    "createOrder trusts client-provided item prices and totalAmount; the backend does not recompute/validate totals against stored product prices or availability.",
+    "Backend uses Float for currency amounts, which can introduce rounding/precision errors for monetary values.",
+    "Deleting a category does not update products that reference that categoryId, leaving orphaned references (UI may display \"Unknown\").",
+    "Orders store only productId/price/quantity; admin order details cannot display product names without additional lookup/join logic.",
+    "List endpoints (products, categories, orders) return full arrays with no pagination/limits, which may not scale for large datasets.",
+    "There is no backend enforcement preventing orders from including unavailable products (beyond the frontend disabling purchase when available=false)."
+  ],
+  "isFixRequest": true,
+  "imageRequirements": "## Edit Images\n- Increase vibrance/saturation and premium lighting/contrast on the food items only; keep background and overall palette unchanged (hanma-hero.dim_1600x600.png > hanma-hero-colorful.dim_1600x600.png)",
+  "generatedImages": [
+    {
+      "filename": "hanma-hero-colorful.dim_1600x600.png",
+      "description": "Increase vibrance/saturation and premium lighting/contrast on the food items only; keep background and overall palette unchanged",
+      "targetWidth": 1600,
+      "targetHeight": 600
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Hanma store",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

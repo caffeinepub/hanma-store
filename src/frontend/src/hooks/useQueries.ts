@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import { useInternetIdentity } from './useInternetIdentity';
 import type { Product, Category, Order, UserProfile, OrderItem } from '../backend';
 
 export function useGetAllProducts() {
@@ -265,6 +266,9 @@ export function useDeleteCategory() {
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
 
   const query = useQuery<UserProfile | null>({
     queryKey: ['currentUserProfile'],
@@ -272,14 +276,14 @@ export function useGetCallerUserProfile() {
       if (!actor) throw new Error('Actor not available');
       return actor.getCallerUserProfile();
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !actorFetching && isAuthenticated,
     retry: false,
   });
 
   return {
     ...query,
     isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
+    isFetched: !!actor && isAuthenticated && query.isFetched,
   };
 }
 
@@ -308,5 +312,21 @@ export function useIsCallerAdmin() {
       return actor.isCallerAdmin();
     },
     enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAdminSeedInitialProducts() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.adminSeedInitialProducts();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['productCatalog'] });
+    },
   });
 }

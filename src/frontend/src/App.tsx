@@ -1,6 +1,7 @@
 import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from 'next-themes';
+import { useEffect } from 'react';
 import Header from './components/nav/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
@@ -8,6 +9,7 @@ import CatalogPage from './pages/CatalogPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
@@ -15,8 +17,15 @@ import AdminOrderDetailsPage from './pages/admin/AdminOrderDetailsPage';
 import AdminGuard from './components/auth/AdminGuard';
 import { CartProvider } from './cart/CartProvider';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
+import { getSecretParameter } from './utils/urlParams';
 
 function Layout() {
+  useEffect(() => {
+    // Eagerly read and persist admin secret from URL hash at app startup
+    // This ensures the token is captured and cleared from the address bar early
+    getSecretParameter('caffeineAdminToken');
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -61,6 +70,16 @@ const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/checkout',
   component: CheckoutPage,
+});
+
+const adminDashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin',
+  component: () => (
+    <AdminGuard>
+      <AdminDashboardPage />
+    </AdminGuard>
+  ),
 });
 
 const adminProductsRoute = createRoute({
@@ -109,6 +128,7 @@ const routeTree = rootRoute.addChildren([
   productRoute,
   cartRoute,
   checkoutRoute,
+  adminDashboardRoute,
   adminProductsRoute,
   adminCategoriesRoute,
   adminOrdersRoute,

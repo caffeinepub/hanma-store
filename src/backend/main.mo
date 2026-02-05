@@ -11,15 +11,15 @@ import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
 actor {
+  var nextProductId : Nat32 = 0;
+  var nextCategoryId : Nat32 = 0;
+  var nextOrderId : Nat32 = 0;
+
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
   type ProductId = Nat32;
   type CategoryId = Nat32;
-
-  var nextProductId : Nat32 = 0;
-  var nextCategoryId : Nat32 = 0;
-  var nextOrderId : Nat32 = 0;
 
   public type Product = {
     id : ProductId;
@@ -31,18 +31,9 @@ actor {
     categoryId : ?CategoryId;
   };
 
-  let products = Map.empty<ProductId, Product>();
-
-  type OrderId = Nat32;
-
-  public type Order = {
-    id : OrderId;
-    items : [OrderItem];
-    totalAmount : Float;
-    timestamp : Time.Time;
-    customerName : Text;
-    customerEmail : Text;
-    customerAddress : Text;
+  public type Category = {
+    id : CategoryId;
+    name : Text;
   };
 
   public type OrderItem = {
@@ -51,22 +42,25 @@ actor {
     price : Float;
   };
 
-  let orders = Map.empty<OrderId, Order>();
-
-  public type Category = {
-    id : CategoryId;
-    name : Text;
+  public type Order = {
+    id : Nat32;
+    items : [OrderItem];
+    totalAmount : Float;
+    timestamp : Time.Time;
+    customerName : Text;
+    customerEmail : Text;
+    customerAddress : Text;
   };
-
-  let categories = Map.empty<CategoryId, Category>();
 
   public type UserProfile = {
     name : Text;
   };
 
+  let products = Map.empty<ProductId, Product>();
+  let categories = Map.empty<CategoryId, Category>();
+  let orders = Map.empty<Nat32, Order>();
   let userProfiles = Map.empty<Principal, UserProfile>();
 
-  // User Profile Management
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -88,17 +82,20 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Product Management (Admin-only for CUD operations)
-  public shared ({ caller }) func createProduct(name : Text, description : Text, price : Float, imageUrl : Text, available : Bool, categoryId : ?CategoryId) : async ProductId {
+  public shared ({ caller }) func createProduct(
+    name : Text,
+    description : Text,
+    price : Float,
+    imageUrl : Text,
+    available : Bool,
+    categoryId : ?CategoryId,
+  ) : async ProductId {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can create products");
     };
 
-    let newProductId = nextProductId;
-    nextProductId += 1;
-
     let product : Product = {
-      id = newProductId;
+      id = nextProductId;
       name;
       description;
       price;
@@ -107,11 +104,20 @@ actor {
       categoryId;
     };
 
-    products.add(newProductId, product);
-    newProductId;
+    products.add(nextProductId, product);
+    nextProductId += 1;
+    product.id;
   };
 
-  public shared ({ caller }) func updateProduct(productId : ProductId, name : Text, description : Text, price : Float, imageUrl : Text, available : Bool, categoryId : ?CategoryId) : async () {
+  public shared ({ caller }) func updateProduct(
+    productId : ProductId,
+    name : Text,
+    description : Text,
+    price : Float,
+    imageUrl : Text,
+    available : Bool,
+    categoryId : ?CategoryId,
+  ) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can update products");
     };
@@ -159,12 +165,14 @@ actor {
   };
 
   public query func listProductsByCategory(categoryId : CategoryId) : async [Product] {
-    products.values().toArray().filter(func(product) {
-      switch (product.categoryId) {
-        case (?catId) { catId == categoryId };
-        case (null) { false };
-      };
-    });
+    products.values().toArray().filter(
+      func(product) {
+        switch (product.categoryId) {
+          case (?catId) { catId == categoryId };
+          case (null) { false };
+        };
+      }
+    );
   };
 
   public query func listAllProductsSortedByPrice() : async [Product] {
@@ -177,22 +185,19 @@ actor {
     );
   };
 
-  // Category Management (Admin-only for CUD operations)
   public shared ({ caller }) func createCategory(name : Text) : async CategoryId {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can create categories");
     };
 
-    let newCategoryId = nextCategoryId;
-    nextCategoryId += 1;
-
     let category : Category = {
-      id = newCategoryId;
+      id = nextCategoryId;
       name;
     };
 
-    categories.add(newCategoryId, category);
-    newCategoryId;
+    categories.add(nextCategoryId, category);
+    nextCategoryId += 1;
+    category.id;
   };
 
   public shared ({ caller }) func updateCategory(categoryId : CategoryId, name : Text) : async () {
@@ -229,23 +234,23 @@ actor {
     };
   };
 
-  // Public category browsing (no auth required)
   public query func listAllCategories() : async [Category] {
     categories.values().toArray();
   };
 
-  // Order Management
-  public shared func createOrder(items : [OrderItem], totalAmount : Float, customerName : Text, customerEmail : Text, customerAddress : Text) : async OrderId {
-    // Public function - guests can place orders
+  public shared func createOrder(
+    items : [OrderItem],
+    totalAmount : Float,
+    customerName : Text,
+    customerEmail : Text,
+    customerAddress : Text,
+  ) : async Nat32 {
     if (items.size() == 0) {
       Runtime.trap("Order must contain at least one item");
     };
 
-    let newOrderId = nextOrderId;
-    nextOrderId += 1;
-
     let order : Order = {
-      id = newOrderId;
+      id = nextOrderId;
       items;
       totalAmount;
       timestamp = Time.now();
@@ -254,11 +259,12 @@ actor {
       customerAddress;
     };
 
-    orders.add(newOrderId, order);
-    newOrderId;
+    orders.add(nextOrderId, order);
+    nextOrderId += 1;
+    order.id;
   };
 
-  public query ({ caller }) func getOrderById(orderId : OrderId) : async ?Order {
+  public query ({ caller }) func getOrderById(orderId : Nat32) : async ?Order {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can view orders");
     };
@@ -272,10 +278,44 @@ actor {
     orders.values().toArray();
   };
 
-  // Public product catalog browsing (no auth required)
-  public query func getProductCatalog() : async { categories : [Category]; products : [Product] } {
+  public query func getProductCatalog() : async {
+    categories : [Category];
+    products : [Product];
+  } {
     let categoriesArray = categories.values().toArray();
     let productsArray = products.values().toArray();
     { categories = categoriesArray; products = productsArray };
+  };
+
+  public shared ({ caller }) func adminSeedInitialProducts() : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can seed products");
+    };
+
+    if (products.size() == 0) {
+      let productA : Product = {
+        id = nextProductId;
+        name = "Test Product A";
+        description = "This is a dummy product";
+        price = 49.23;
+        imageUrl = "https://immutableproductimageslink.com/a";
+        available = true;
+        categoryId = null;
+      };
+
+      let productB : Product = {
+        id = nextProductId + 1;
+        name = "Test Product B";
+        description = "This is a second dummy product";
+        price = 231.09;
+        imageUrl = "https://immutableproductimageslink.com/b";
+        available = true;
+        categoryId = null;
+      };
+
+      products.add(productA.id, productA);
+      products.add(productB.id, productB);
+      nextProductId += 2;
+    };
   };
 };

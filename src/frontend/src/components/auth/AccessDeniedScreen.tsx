@@ -1,9 +1,14 @@
 import { ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 
-export default function AccessDeniedScreen() {
+interface AccessDeniedScreenProps {
+  errorMessage?: string | null;
+}
+
+export default function AccessDeniedScreen({ errorMessage }: AccessDeniedScreenProps) {
   const navigate = useNavigate();
   const { identity, login } = useInternetIdentity();
 
@@ -14,13 +19,29 @@ export default function AccessDeniedScreen() {
         <h1 className="mb-3 text-2xl font-bold">Admin Access Required</h1>
         <p className="mb-6 text-muted-foreground">
           {identity
-            ? 'You do not have admin privileges. Adding and editing products is restricted to admin accounts only. Please log in with an admin account to access product management.'
-            : 'This area is restricted to administrators only. Please log in with an admin account to add or edit products.'}
+            ? 'You do not have admin privileges. This area is restricted to administrators only.'
+            : 'This area is restricted to administrators only. Please log in to access the admin dashboard.'}
         </p>
+        
+        {errorMessage && (
+          <Alert variant="destructive" className="mb-6 text-left">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+
+        {identity && (
+          <div className="mb-6 rounded-lg border bg-muted/50 p-4 text-left text-sm">
+            <p className="font-medium mb-2">Note:</p>
+            <p className="text-muted-foreground">
+              Admin access is granted through explicit role assignment. Contact your system administrator to request admin privileges.
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           {!identity && (
             <Button onClick={login} size="lg">
-              Login with Admin Account
+              Login to Continue
             </Button>
           )}
           <Button onClick={() => navigate({ to: '/' })} variant="outline" size="lg">

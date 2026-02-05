@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../cart/CartProvider';
 import { useCreateOrder } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
@@ -23,10 +23,11 @@ export default function CheckoutPage() {
     address: '',
   });
 
-  if (items.length === 0 && !orderComplete) {
-    navigate({ to: '/catalog' });
-    return null;
-  }
+  useEffect(() => {
+    if (items.length === 0 && !orderComplete) {
+      navigate({ to: '/catalog' });
+    }
+  }, [items.length, orderComplete, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

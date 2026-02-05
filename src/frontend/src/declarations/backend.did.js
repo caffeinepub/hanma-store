@@ -20,11 +20,10 @@ export const OrderItem = IDL.Record({
   'quantity' : IDL.Nat32,
   'price' : IDL.Float64,
 });
-export const OrderId = IDL.Nat32;
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const Time = IDL.Int;
 export const Order = IDL.Record({
-  'id' : OrderId,
+  'id' : IDL.Nat32,
   'customerName' : IDL.Text,
   'customerAddress' : IDL.Text,
   'totalAmount' : IDL.Float64,
@@ -45,11 +44,12 @@ export const Category = IDL.Record({ 'id' : CategoryId, 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'adminSeedInitialProducts' : IDL.Func([], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
   'createOrder' : IDL.Func(
       [IDL.Vec(OrderItem), IDL.Float64, IDL.Text, IDL.Text, IDL.Text],
-      [OrderId],
+      [IDL.Nat32],
       [],
     ),
   'createProduct' : IDL.Func(
@@ -68,7 +68,7 @@ export const idlService = IDL.Service({
   'deleteProduct' : IDL.Func([ProductId], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getOrderById' : IDL.Func([OrderId], [IDL.Opt(Order)], ['query']),
+  'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
   'getProductById' : IDL.Func([ProductId], [IDL.Opt(Product)], ['query']),
   'getProductCatalog' : IDL.Func(
       [],
@@ -127,11 +127,10 @@ export const idlFactory = ({ IDL }) => {
     'quantity' : IDL.Nat32,
     'price' : IDL.Float64,
   });
-  const OrderId = IDL.Nat32;
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const Time = IDL.Int;
   const Order = IDL.Record({
-    'id' : OrderId,
+    'id' : IDL.Nat32,
     'customerName' : IDL.Text,
     'customerAddress' : IDL.Text,
     'totalAmount' : IDL.Float64,
@@ -152,11 +151,12 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'adminSeedInitialProducts' : IDL.Func([], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
     'createOrder' : IDL.Func(
         [IDL.Vec(OrderItem), IDL.Float64, IDL.Text, IDL.Text, IDL.Text],
-        [OrderId],
+        [IDL.Nat32],
         [],
       ),
     'createProduct' : IDL.Func(
@@ -175,7 +175,7 @@ export const idlFactory = ({ IDL }) => {
     'deleteProduct' : IDL.Func([ProductId], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getOrderById' : IDL.Func([OrderId], [IDL.Opt(Order)], ['query']),
+    'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
     'getProductById' : IDL.Func([ProductId], [IDL.Opt(Product)], ['query']),
     'getProductCatalog' : IDL.Func(
         [],

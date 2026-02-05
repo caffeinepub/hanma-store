@@ -89,15 +89,6 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Product {
-    id: ProductId;
-    categoryId?: CategoryId;
-    name: string;
-    description: string;
-    available: boolean;
-    imageUrl: string;
-    price: number;
-}
 export interface Category {
     id: CategoryId;
     name: string;
@@ -111,7 +102,7 @@ export interface OrderItem {
 export type CategoryId = number;
 export type ProductId = number;
 export interface Order {
-    id: OrderId;
+    id: number;
     customerName: string;
     customerAddress: string;
     totalAmount: number;
@@ -119,9 +110,17 @@ export interface Order {
     items: Array<OrderItem>;
     customerEmail: string;
 }
-export type OrderId = number;
 export interface UserProfile {
     name: string;
+}
+export interface Product {
+    id: ProductId;
+    categoryId?: CategoryId;
+    name: string;
+    description: string;
+    available: boolean;
+    imageUrl: string;
+    price: number;
 }
 export enum UserRole {
     admin = "admin",
@@ -130,15 +129,16 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
+    adminSeedInitialProducts(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCategory(name: string): Promise<CategoryId>;
-    createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<OrderId>;
+    createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<number>;
     createProduct(name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: CategoryId | null): Promise<ProductId>;
     deleteCategory(categoryId: CategoryId): Promise<void>;
     deleteProduct(productId: ProductId): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getOrderById(orderId: OrderId): Promise<Order | null>;
+    getOrderById(orderId: number): Promise<Order | null>;
     getProductById(productId: ProductId): Promise<Product | null>;
     getProductCatalog(): Promise<{
         categories: Array<Category>;
@@ -172,6 +172,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async adminSeedInitialProducts(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminSeedInitialProducts();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminSeedInitialProducts();
+            return result;
+        }
+    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
@@ -200,7 +214,7 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createOrder(arg0: Array<OrderItem>, arg1: number, arg2: string, arg3: string, arg4: string): Promise<OrderId> {
+    async createOrder(arg0: Array<OrderItem>, arg1: number, arg2: string, arg3: string, arg4: string): Promise<number> {
         if (this.processError) {
             try {
                 const result = await this.actor.createOrder(arg0, arg1, arg2, arg3, arg4);
@@ -284,7 +298,7 @@ export class Backend implements backendInterface {
             return from_candid_UserRole_n5(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getOrderById(arg0: OrderId): Promise<Order | null> {
+    async getOrderById(arg0: number): Promise<Order | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getOrderById(arg0);

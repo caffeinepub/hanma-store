@@ -33,7 +33,7 @@ export default function HomePage() {
             </div>
             <div className="relative aspect-video overflow-hidden rounded-lg lg:aspect-auto lg:h-full">
               <img
-                src="/assets/generated/hanma-hero.dim_1600x600.png"
+                src="/assets/generated/hanma-hero-colorful-food.dim_1600x600.png"
                 alt="Premium meats"
                 className="h-full w-full object-cover"
               />

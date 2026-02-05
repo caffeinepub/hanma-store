@@ -5,6 +5,7 @@ import {
   useCreateProduct,
   useUpdateProduct,
   useDeleteProduct,
+  useAdminSeedInitialProducts,
 } from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { TableSkeleton } from '../../components/states/LoadingSkeleton';
 import ErrorState from '../../components/states/ErrorState';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { Pencil, Trash2, Plus, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product } from '../../backend';
 
@@ -27,6 +28,7 @@ export default function AdminProductsPage() {
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
+  const seedProducts = useAdminSeedInitialProducts();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -112,6 +114,19 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleSeedProducts = async () => {
+    try {
+      await seedProducts.mutateAsync();
+      toast.success('Default products added successfully');
+    } catch (error: any) {
+      if (error?.message?.includes('already')) {
+        toast.info('Products already exist');
+      } else {
+        toast.error('Failed to seed products');
+      }
+    }
+  };
+
   if (error) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -131,98 +146,106 @@ export default function AdminProductsPage() {
           <h1 className="text-3xl font-bold">Products</h1>
           <p className="text-muted-foreground">Manage your product catalog</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()} size="lg">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
+        <div className="flex gap-3">
+          {products.length === 0 && (
+            <Button onClick={handleSeedProducts} disabled={seedProducts.isPending} variant="outline" size="lg">
+              <Sparkles className="mr-2 h-4 w-4" />
+              {seedProducts.isPending ? 'Seeding...' : 'Seed Default Products'}
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+          )}
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => handleOpenDialog()} size="lg">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Price *</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
                   />
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price *</Label>
+                  <Label htmlFor="imageUrl">Image URL</Label>
                   <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    required
+                    id="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    placeholder="https://example.com/image.jpg"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select value={formData.categoryId} onValueChange={(value) => setFormData({ ...formData, categoryId: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">None</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="imageUrl">Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="available"
+                    checked={formData.available}
+                    onCheckedChange={(checked) => setFormData({ ...formData, available: checked })}
+                  />
+                  <Label htmlFor="available">Available for purchase</Label>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select value={formData.categoryId} onValueChange={(value) => setFormData({ ...formData, categoryId: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">None</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={String(cat.id)}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="available"
-                  checked={formData.available}
-                  onCheckedChange={(checked) => setFormData({ ...formData, available: checked })}
-                />
-                <Label htmlFor="available">Available for purchase</Label>
-              </div>
-
-              <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={createProduct.isPending || updateProduct.isPending}>
-                  {createProduct.isPending || updateProduct.isPending ? 'Saving...' : 'Save Product'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <div className="flex justify-end gap-3">
+                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={createProduct.isPending || updateProduct.isPending}>
+                    {createProduct.isPending || updateProduct.isPending ? 'Saving...' : 'Save Product'}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {isLoading ? (

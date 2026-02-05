@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '../../cart/CartProvider';
 import LoginButton from '../auth/LoginButton';
@@ -52,12 +52,13 @@ export default function Header() {
             </Link>
             {identity && isAdmin && (
               <Link
-                to="/admin/products"
-                className="text-sm font-medium transition-colors hover:text-foreground/80"
+                to="/admin"
+                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80"
                 activeProps={{ className: 'text-foreground' }}
                 inactiveProps={{ className: 'text-foreground/60' }}
               >
-                Manage Products
+                <LayoutDashboard className="h-4 w-4" />
+                Admin Dashboard
               </Link>
             )}
           </nav>
@@ -105,11 +106,12 @@ export default function Header() {
             </Link>
             {identity && isAdmin && (
               <Link
-                to="/admin/products"
-                className="text-sm font-medium transition-colors hover:text-foreground/80"
+                to="/admin"
+                className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground/80"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Manage Products
+                <LayoutDashboard className="h-4 w-4" />
+                Admin Dashboard
               </Link>
             )}
           </nav>

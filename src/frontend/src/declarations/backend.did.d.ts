@@ -13,7 +13,7 @@ import type { Principal } from '@icp-sdk/core/principal';
 export interface Category { 'id' : CategoryId, 'name' : string }
 export type CategoryId = number;
 export interface Order {
-  'id' : OrderId,
+  'id' : number,
   'customerName' : string,
   'customerAddress' : string,
   'totalAmount' : number,
@@ -21,7 +21,6 @@ export interface Order {
   'items' : Array<OrderItem>,
   'customerEmail' : string,
 }
-export type OrderId = number;
 export interface OrderItem {
   'productId' : ProductId,
   'quantity' : number,
@@ -44,11 +43,12 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'adminSeedInitialProducts' : ActorMethod<[], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createCategory' : ActorMethod<[string], CategoryId>,
   'createOrder' : ActorMethod<
     [Array<OrderItem>, number, string, string, string],
-    OrderId
+    number
   >,
   'createProduct' : ActorMethod<
     [string, string, number, string, boolean, [] | [CategoryId]],
@@ -58,7 +58,7 @@ export interface _SERVICE {
   'deleteProduct' : ActorMethod<[ProductId], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getOrderById' : ActorMethod<[OrderId], [] | [Order]>,
+  'getOrderById' : ActorMethod<[number], [] | [Order]>,
   'getProductById' : ActorMethod<[ProductId], [] | [Product]>,
   'getProductCatalog' : ActorMethod<
     [],
