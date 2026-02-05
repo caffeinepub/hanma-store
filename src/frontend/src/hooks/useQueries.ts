@@ -315,14 +315,14 @@ export function useIsCallerAdmin() {
   });
 }
 
-export function useAdminSeedInitialProducts() {
+export function useAdminSeedTestProducts() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.adminSeedInitialProducts();
+      return actor.adminSeedTestProducts();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });

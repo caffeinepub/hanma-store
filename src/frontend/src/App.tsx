@@ -9,6 +9,8 @@ import CatalogPage from './pages/CatalogPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
@@ -72,6 +74,18 @@ const checkoutRoute = createRoute({
   component: CheckoutPage,
 });
 
+const aboutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/about',
+  component: AboutPage,
+});
+
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/contact',
+  component: ContactPage,
+});
+
 const adminDashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin',
@@ -128,6 +142,8 @@ const routeTree = rootRoute.addChildren([
   productRoute,
   cartRoute,
   checkoutRoute,
+  aboutRoute,
+  contactRoute,
   adminDashboardRoute,
   adminProductsRoute,
   adminCategoriesRoute,

@@ -46,7 +46,7 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    adminSeedInitialProducts(): Promise<void>;
+    adminSeedTestProducts(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCategory(name: string): Promise<CategoryId>;
     createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<number>;

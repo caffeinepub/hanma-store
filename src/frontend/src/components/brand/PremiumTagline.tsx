@@ -1,7 +1,9 @@
+import { cafe37Content } from '../../content/cafe37';
+
 export default function PremiumTagline() {
   return (
-    <span className="text-sm tracking-wide text-muted-foreground">
-      A premium dining experience
-    </span>
+    <p className="text-muted-foreground">
+      {cafe37Content.tagline}
+    </p>
   );
 }

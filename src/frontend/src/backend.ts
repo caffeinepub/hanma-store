@@ -129,7 +129,7 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    adminSeedInitialProducts(): Promise<void>;
+    adminSeedTestProducts(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCategory(name: string): Promise<CategoryId>;
     createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<number>;
@@ -172,17 +172,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async adminSeedInitialProducts(): Promise<void> {
+    async adminSeedTestProducts(): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.adminSeedInitialProducts();
+                const result = await this.actor.adminSeedTestProducts();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.adminSeedInitialProducts();
+            const result = await this.actor.adminSeedTestProducts();
             return result;
         }
     }

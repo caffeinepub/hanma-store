@@ -5,7 +5,7 @@ import {
   useCreateProduct,
   useUpdateProduct,
   useDeleteProduct,
-  useAdminSeedInitialProducts,
+  useAdminSeedTestProducts,
 } from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +28,7 @@ export default function AdminProductsPage() {
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
-  const seedProducts = useAdminSeedInitialProducts();
+  const seedProducts = useAdminSeedTestProducts();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -270,7 +270,7 @@ export default function AdminProductsPage() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>₹{product.price.toFixed(2)}</TableCell>
                   <TableCell>
                     {product.categoryId
                       ? categories.find((c) => c.id === product.categoryId)?.name || 'Unknown'

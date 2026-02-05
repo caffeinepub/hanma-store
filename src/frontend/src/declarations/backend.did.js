@@ -44,7 +44,7 @@ export const Category = IDL.Record({ 'id' : CategoryId, 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'adminSeedInitialProducts' : IDL.Func([], [], []),
+  'adminSeedTestProducts' : IDL.Func([], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
   'createOrder' : IDL.Func(
@@ -151,7 +151,7 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'adminSeedInitialProducts' : IDL.Func([], [], []),
+    'adminSeedTestProducts' : IDL.Func([], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
     'createOrder' : IDL.Func(

@@ -43,7 +43,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
             </Badge>
           )}
         </div>
-        <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
+        <p className="text-lg font-bold">₹{product.price.toFixed(2)}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button

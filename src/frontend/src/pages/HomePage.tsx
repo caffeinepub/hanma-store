@@ -1,40 +1,65 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from '@tanstack/react-router';
-import { ArrowRight } from 'lucide-react';
-import PremiumTagline from '@/components/brand/PremiumTagline';
+import { Phone, MessageCircle, MapPin, ShoppingBag, Star, Music, Wifi, UtensilsCrossed } from 'lucide-react';
+import { cafe37Content } from '../content/cafe37';
+import { toast } from 'sonner';
 
 export default function HomePage() {
   const navigate = useNavigate();
 
+  const handleOrderOnline = () => {
+    toast.info('Online ordering coming soon! Visit us in person or call to place your order.');
+  };
+
   return (
     <div className="flex flex-col">
-      <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background">
-        <div className="container mx-auto px-4 py-12 md:py-20">
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-            <div className="flex flex-col justify-center">
-              <div className="mb-3">
-                <PremiumTagline />
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+            <div className="flex flex-col animate-fade-in">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary w-fit">
+                <Star className="h-4 w-4 fill-primary" />
+                {cafe37Content.rating} ({cafe37Content.reviewCount} Reviews)
               </div>
-              <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                Premium Quality
-                <br />
-                <span className="text-muted-foreground">Non-Veg Delights</span>
+              <h1 className="mb-4 font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+                {cafe37Content.name}
               </h1>
-              <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-                Discover the finest selection of fresh, high-quality meats and seafood. From farm to table, we ensure
-                excellence in every cut.
+              <p className="mb-8 text-xl text-muted-foreground md:text-2xl max-w-xl">
+                {cafe37Content.tagline}
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" onClick={() => navigate({ to: '/catalog' })}>
-                  Browse Menu
-                  <ArrowRight className="ml-2 h-5 w-5" />
+              <p className="mb-8 text-lg text-muted-foreground">
+                {cafe37Content.priceRange} · {cafe37Content.status} · {cafe37Content.todayHours}
+              </p>
+              <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+                <Button size="lg" asChild className="shadow-glow">
+                  <a href={cafe37Content.phoneLink}>
+                    <Phone className="mr-2 h-5 w-5" />
+                    Call
+                  </a>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <a href={cafe37Content.whatsappLink} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-5 w-5" />
+                    WhatsApp
+                  </a>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <a href={cafe37Content.directionsUrl} target="_blank" rel="noopener noreferrer">
+                    <MapPin className="mr-2 h-5 w-5" />
+                    Directions
+                  </a>
+                </Button>
+                <Button size="lg" variant="secondary" onClick={handleOrderOnline}>
+                  <ShoppingBag className="mr-2 h-5 w-5" />
+                  Order Online
+                  <span className="ml-2 text-xs">(Coming Soon)</span>
                 </Button>
               </div>
             </div>
-            <div className="relative aspect-video overflow-hidden rounded-lg lg:aspect-auto lg:h-full">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl shadow-soft lg:aspect-auto lg:h-[500px]">
               <img
-                src="/assets/generated/hanma-hero-colorful-food.dim_1600x600.png"
-                alt="Premium meats"
+                src="/assets/generated/cafe37-hero.dim_1600x900.png"
+                alt={`${cafe37Content.name} - Premium café atmosphere`}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -42,45 +67,85 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-background py-16">
+      <section className="border-t border-border bg-background py-20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold">Why Choose Hanma store</h2>
-            <p className="text-muted-foreground">Quality and freshness you can trust</p>
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 font-display text-4xl font-bold">Why Choose {cafe37Content.name}</h2>
+            <p className="text-lg text-muted-foreground">Experience the best of café culture</p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <span className="text-2xl font-bold">1</span>
+            {cafe37Content.highlights.map((highlight, index) => {
+              const icons = [UtensilsCrossed, Star, Music];
+              const Icon = icons[index];
+              const colors = ['primary', 'secondary', 'accent'];
+              const color = colors[index];
+              
+              return (
+                <div key={index} className="group rounded-2xl border border-border bg-card p-8 text-center transition-all hover:border-primary/50 hover:shadow-soft">
+                  <div className="mb-6 flex justify-center">
+                    <div className={`flex h-20 w-20 items-center justify-center rounded-2xl bg-${color}/10 text-${color} transition-transform group-hover:scale-110`}>
+                      <Icon className="h-10 w-10" />
+                    </div>
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold">{highlight.title}</h3>
+                  <p className="text-muted-foreground">{highlight.description}</p>
                 </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-muted/30 py-20">
+        <div className="container mx-auto px-4">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 font-display text-4xl font-bold">What Our Customers Say</h2>
+            <p className="text-lg text-muted-foreground">Real reviews from real people</p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {cafe37Content.testimonials.map((testimonial, index) => (
+              <div key={index} className="rounded-2xl border border-border bg-card p-6">
+                <div className="mb-4 flex items-center gap-1">
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="mb-4 text-muted-foreground italic">"{testimonial.text}"</p>
+                <p className="font-semibold">— {testimonial.name}</p>
               </div>
-              <h3 className="mb-2 text-xl font-semibold">Premium Quality</h3>
-              <p className="text-muted-foreground">
-                Hand-selected cuts from trusted suppliers, ensuring the highest standards of quality and taste.
-              </p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-gradient-to-br from-primary/10 to-secondary/10 py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="mb-4 font-display text-4xl font-bold">Visit Us Today</h2>
+            <p className="mb-6 text-lg text-muted-foreground">
+              Experience cozy atmosphere, delicious food, and friendly service at {cafe37Content.name}
+            </p>
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Wifi className="h-4 w-4" />
+                Free Wi-Fi
+              </div>
+              <div className="flex items-center gap-2">
+                <UtensilsCrossed className="h-4 w-4" />
+                Outdoor Seating
+              </div>
+              <div className="flex items-center gap-2">
+                <Music className="h-4 w-4" />
+                Live Music on Weekends
+              </div>
             </div>
-            <div className="text-center">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <span className="text-2xl font-bold">2</span>
-                </div>
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Always Fresh</h3>
-              <p className="text-muted-foreground">
-                Daily deliveries and proper storage ensure your order arrives fresh and ready to cook.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                  <span className="text-2xl font-bold">3</span>
-                </div>
-              </div>
-              <h3 className="mb-2 text-xl font-semibold">Expert Service</h3>
-              <p className="text-muted-foreground">
-                Our knowledgeable team is here to help you choose the perfect cuts for any occasion.
-              </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button size="lg" onClick={() => navigate({ to: '/catalog' })} className="shadow-glow">
+                View Menu
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate({ to: '/contact' })}>
+                Get Directions
+              </Button>
             </div>
           </div>
         </div>

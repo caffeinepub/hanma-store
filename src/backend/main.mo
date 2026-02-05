@@ -2,17 +2,20 @@ import Map "mo:core/Map";
 import Text "mo:core/Text";
 import Iter "mo:core/Iter";
 import Array "mo:core/Array";
+import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Order "mo:core/Order";
 import Time "mo:core/Time";
-import List "mo:core/List";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+// Apply migration whenever actor is upgraded
+
 actor {
-  var nextProductId : Nat32 = 0;
-  var nextCategoryId : Nat32 = 0;
+  var nextProductId : Nat32 = 1_000_000;
+  var nextCategoryId : Nat32 = 1_000_000;
   var nextOrderId : Nat32 = 0;
 
   let accessControlState = AccessControl.initState();
@@ -63,7 +66,7 @@ actor {
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
+      Runtime.trap("Unauthorized: Only users can save profiles");
     };
     userProfiles.get(caller);
   };
@@ -238,13 +241,17 @@ actor {
     categories.values().toArray();
   };
 
-  public shared func createOrder(
+  public shared ({ caller }) func createOrder(
     items : [OrderItem],
     totalAmount : Float,
     customerName : Text,
     customerEmail : Text,
     customerAddress : Text,
   ) : async Nat32 {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can create orders");
+    };
+
     if (items.size() == 0) {
       Runtime.trap("Order must contain at least one item");
     };
@@ -287,35 +294,33 @@ actor {
     { categories = categoriesArray; products = productsArray };
   };
 
-  public shared ({ caller }) func adminSeedInitialProducts() : async () {
+  public shared ({ caller }) func adminSeedTestProducts() : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can seed products");
     };
 
-    if (products.size() == 0) {
-      let productA : Product = {
-        id = nextProductId;
-        name = "Test Product A";
-        description = "This is a dummy product";
-        price = 49.23;
-        imageUrl = "https://immutableproductimageslink.com/a";
-        available = true;
-        categoryId = null;
-      };
-
-      let productB : Product = {
-        id = nextProductId + 1;
-        name = "Test Product B";
-        description = "This is a second dummy product";
-        price = 231.09;
-        imageUrl = "https://immutableproductimageslink.com/b";
-        available = true;
-        categoryId = null;
-      };
-
-      products.add(productA.id, productA);
-      products.add(productB.id, productB);
-      nextProductId += 2;
+    let productA : Product = {
+      id = nextProductId;
+      name = "Test Product A";
+      description = "This is a dummy product";
+      price = 49.23;
+      imageUrl = "https://immutableproductimageslink.com/a";
+      available = true;
+      categoryId = null;
     };
+
+    let productB : Product = {
+      id = nextProductId + 1;
+      name = "Test Product B";
+      description = "This is a second dummy product";
+      price = 231.09;
+      imageUrl = "https://immutableproductimageslink.com/b";
+      available = true;
+      categoryId = null;
+    };
+
+    products.add(productA.id, productA);
+    products.add(productB.id, productB);
+    nextProductId += 2;
   };
 };

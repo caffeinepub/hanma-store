@@ -65,14 +65,18 @@ export default function CheckoutPage() {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-2xl text-center">
-          <CheckCircle2 className="mx-auto mb-6 h-20 w-20 text-primary" />
-          <h1 className="mb-3 text-3xl font-bold">Order Confirmed!</h1>
-          <p className="mb-2 text-lg text-muted-foreground">Thank you for your order.</p>
-          <p className="mb-8 text-muted-foreground">
+          <div className="mb-8 flex justify-center">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-success/10">
+              <CheckCircle2 className="h-12 w-12 text-success" />
+            </div>
+          </div>
+          <h1 className="mb-4 font-display text-4xl font-bold">Order Confirmed!</h1>
+          <p className="mb-3 text-xl text-muted-foreground">Thank you for your order.</p>
+          <p className="mb-10 text-lg text-muted-foreground">
             Your order #{orderId} has been received and is being processed.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button onClick={() => navigate({ to: '/catalog' })} size="lg">
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <Button onClick={() => navigate({ to: '/catalog' })} size="lg" className="shadow-glow">
               Continue Shopping
             </Button>
             <Button onClick={() => navigate({ to: '/' })} variant="outline" size="lg">
@@ -86,16 +90,16 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="mb-8 text-3xl font-bold">Checkout</h1>
+      <h1 className="mb-10 font-display text-4xl font-bold">Checkout</h1>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="shadow-soft">
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
+              <CardTitle className="text-2xl">Contact Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name *</Label>
                   <Input
@@ -131,7 +135,7 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full" size="lg" disabled={createOrder.isPending}>
+                <Button type="submit" className="w-full shadow-glow" size="lg" disabled={createOrder.isPending}>
                   {createOrder.isPending ? 'Placing Order...' : 'Place Order'}
                 </Button>
               </form>
@@ -140,25 +144,25 @@ export default function CheckoutPage() {
         </div>
 
         <div className="lg:col-span-1">
-          <Card className="sticky top-20">
+          <Card className="sticky top-24 shadow-soft">
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="text-2xl">Order Summary</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
                 {items.map((item) => (
                   <div key={item.product.id} className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
                       {item.product.name} × {item.quantity}
                     </span>
-                    <span>${(item.product.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-border pt-4">
-                <div className="flex justify-between text-lg font-bold">
+              <div className="border-t border-border pt-6">
+                <div className="flex justify-between text-xl font-bold">
                   <span>Total</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                  <span className="text-primary">${totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>

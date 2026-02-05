@@ -1,41 +1,46 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T11:52:09.241Z",
-  "summary": "HomePage hero image reference was updated to a new generated asset path, but the diff does not show the new image file being added to /assets/generated. Additional unrelated documentation/state summary updates mention admin/dashboard functionality not requested in the BuildRequest.",
+  "generatedAt": "2026-02-05T19:58:43.441Z",
+  "summary": "Branding and hours content were centralized via `cafe37Content` and a new `businessHours` utility, and HTML metadata was updated. However, the diff summary also indicates many unrelated UI/admin/catalog changes that exceed the stated non-goals, and the Contact page’s full weekly hours display cannot be confirmed from the truncated snippet.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "The hero image file used by the Home page is updated to the newly generated/edited asset in /assets/generated.",
-      "reason": "HomePage.tsx now references a new image path under /assets/generated, but the diff shows no added image asset file in that folder (Added files: none), so the updated hero image itself is not present/implemented in the provided changes.",
+      "id": "REQ-2",
+      "requirement": "Contact page “Hours” section displays the full weekly schedule with the exact times provided for each day.",
+      "reason": "`ContactPage.tsx` is truncated before any explicit “Hours” section rendering is shown. While `getFormattedSchedule()` is imported and called, the diff summary does not provide evidence that the weekly schedule is actually rendered on the page with the required formatting.",
       "evidence": [
-        "frontend/src/pages/HomePage.tsx",
-        "file-diff summary: ADDED FILES: none"
-      ]
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "Use the updated/edited hero asset (hanma-hero.dim_1600x600.png > hanma-hero-colorful.dim_1600x600.png) for the homepage hero image.",
-      "reason": "The HomePage is updated to use \"/assets/generated/hanma-hero-colorful-food.dim_1600x600.png\", which does not match the specified target filename pattern \"hanma-hero-colorful.dim_1600x600.png\" in the BuildRequest summary. If the intended output filename is strict, this is not implemented as specified.",
-      "evidence": [
-        "frontend/src/pages/HomePage.tsx (src=\"/assets/generated/hanma-hero-colorful-food.dim_1600x600.png\")"
+        "frontend/src/pages/ContactPage.tsx (truncated)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Admin dashboard routing/guarding and admin UI features (e.g., new /admin route, admin dashboard link, admin guards, seeding button) described in repository summaries.",
-      "reason": "The BuildRequest explicitly lists creating a new admin dashboard as a non-goal and only requests updating the homepage hero image. The diff includes modified summary/state files describing admin/dashboard-related functionality that is not requested by REQ-1.",
+      "description": "Broad changes to menu/catalog/admin functionality and styling (e.g., CRUD pages, seeding hooks, ₹ pricing, checkout/cart/product detail redesign) beyond updating branding text and business hours.",
+      "reason": "The BuildRequest explicitly lists as non-goals: “No changes to menu/catalog/admin functionality beyond updating displayed branding text and hours content.” The diff summary indicates many such changes in `frontend-file-summaries.txt`.",
       "evidence": [
-        "frontend-file-summaries.txt (mentions \"new admin dashboard route at /admin\", \"Admin Dashboard\" link, AdminGuard, AdminProductsPage seeding button, etc.)",
-        "project_state.json (summary describes admin portal/dashboard and RBAC details)"
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Addition of new About/Contact routes and related page content (beyond hours/branding).",
+      "reason": "Not requested by the BuildRequest; the request is limited to branding text, business hours display, and HTML metadata updates.",
+      "evidence": [
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
+    "frontend/index.html",
+    "frontend/src/components/brand/PremiumTagline.tsx",
+    "frontend/src/components/layout/Footer.tsx",
+    "frontend/src/components/nav/Header.tsx",
+    "frontend/src/content/cafe37.ts",
+    "frontend/src/pages/AboutPage.tsx",
+    "frontend/src/pages/ContactPage.tsx",
     "frontend/src/pages/HomePage.tsx",
+    "frontend/src/utils/businessHours.ts",
     "project_state.json"
   ]
 }
