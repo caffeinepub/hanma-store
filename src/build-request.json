@@ -1,10 +1,72 @@
 {
   "kind": "build_request",
-  "title": "Untitled request",
+  "title": "Add Admin Dashboard (admin home page)",
   "priority": "normal",
-  "requirements": [],
-  "constraints": [],
-  "nonGoals": [],
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Ensure an Admin Dashboard is available at the route \"/admin\" and is protected so that only authenticated admin users can access it; non-admin or unauthenticated users must see an access-denied experience.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Now add Admin dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigating to /admin while logged out shows an access-denied screen with a login option.",
+        "Navigating to /admin while logged in as a non-admin shows an access-denied screen.",
+        "Navigating to /admin while logged in as an admin renders the Admin Dashboard page content without errors."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "On the Admin Dashboard page, display high-level statistics and navigation tiles/cards for key admin areas (Products, Categories, Menu, Orders, and Settings such as Google Reviews), with each tile linking to its respective admin page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Now add Admin dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin Dashboard shows at least: total Products, total Categories, total Menu Items, and total Orders (with loading states while data is fetched).",
+        "Each stat/tile is clickable and routes to the correct admin page (e.g., /admin/products, /admin/categories, /admin/menu, /admin/orders, /admin/google-reviews).",
+        "If any admin data queries fail, the page does not crash and presents a sensible error/loading state."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add an Admin entry point in the site navigation that is only visible to authenticated admin users and routes to \"/admin\".",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Now add Admin dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When logged in as an admin, the header navigation includes an Admin link that routes to /admin.",
+        "When logged out or logged in as a non-admin, the Admin link is not shown in the header navigation.",
+        "The Admin link is also available in the mobile navigation when applicable."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui (compose existing UI components instead).",
+    "Do not edit immutable paths listed in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Backend must remain a single Motoko actor in backend/main.mo; add migration.mo only if persistent state schema changes are required."
+  ],
+  "nonGoals": [
+    "Implementing new authentication providers beyond Internet Identity.",
+    "Adding real-time updates (WebSockets) for admin stats or orders."
+  ],
   "imageRequirements": {
     "required": [],
     "edits": []

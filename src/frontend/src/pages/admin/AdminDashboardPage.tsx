@@ -1,51 +1,60 @@
 import { Link } from '@tanstack/react-router';
-import { Package, FolderTree, ShoppingBag, Star, UtensilsCrossed, LayoutDashboard, Settings, ExternalLink } from 'lucide-react';
+import { Package, FolderTree, ShoppingBag, Star, UtensilsCrossed, LayoutDashboard, Settings, ExternalLink, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useGetAllProducts, useGetAllCategories, useGetAllOrders, useGetMenu } from '../../hooks/useQueries';
 
 export default function AdminDashboardPage() {
-  const { data: products = [], isLoading: productsLoading } = useGetAllProducts();
-  const { data: categories = [], isLoading: categoriesLoading } = useGetAllCategories();
-  const { data: orders = [], isLoading: ordersLoading } = useGetAllOrders();
-  const { data: menu = [], isLoading: menuLoading } = useGetMenu();
+  const { data: products = [], isLoading: productsLoading, error: productsError } = useGetAllProducts();
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useGetAllCategories();
+  const { data: orders = [], isLoading: ordersLoading, error: ordersError } = useGetAllOrders();
+  const { data: menu = [], isLoading: menuLoading, error: menuError } = useGetMenu();
+
+  const hasAnyError = productsError || categoriesError || ordersError || menuError;
+  const isAnyLoading = productsLoading || categoriesLoading || ordersLoading || menuLoading;
 
   const stats = [
     {
       title: 'Products',
-      value: productsLoading ? '...' : products.length,
+      value: productsLoading ? '...' : productsError ? '—' : products.length,
       description: 'Total products in catalog',
       icon: Package,
       link: '/admin/products',
       color: 'text-red-600 dark:text-red-400',
       bgColor: 'bg-red-50 dark:bg-red-950/20',
+      error: productsError,
     },
     {
       title: 'Categories',
-      value: categoriesLoading ? '...' : categories.length,
+      value: categoriesLoading ? '...' : categoriesError ? '—' : categories.length,
       description: 'Product categories',
       icon: FolderTree,
       link: '/admin/categories',
       color: 'text-amber-600 dark:text-amber-400',
       bgColor: 'bg-amber-50 dark:bg-amber-950/20',
+      error: categoriesError,
     },
     {
       title: 'Menu Items',
-      value: menuLoading ? '...' : menu.reduce((acc, cat) => acc + cat.items.length, 0),
+      value: menuLoading ? '...' : menuError ? '—' : menu.reduce((acc, cat) => acc + cat.items.length, 0),
       description: 'Restaurant menu items',
       icon: UtensilsCrossed,
       link: '/admin/menu',
       color: 'text-orange-600 dark:text-orange-400',
       bgColor: 'bg-orange-50 dark:bg-orange-950/20',
+      error: menuError,
     },
     {
       title: 'Orders',
-      value: ordersLoading ? '...' : orders.length,
+      value: ordersLoading ? '...' : ordersError ? '—' : orders.length,
       description: 'Total customer orders',
       icon: ShoppingBag,
       link: '/admin/orders',
       color: 'text-green-600 dark:text-green-400',
       bgColor: 'bg-green-50 dark:bg-green-950/20',
+      error: ordersError,
     },
   ];
 
@@ -115,10 +124,23 @@ export default function AdminDashboardPage() {
         <p className="text-muted-foreground">Manage your restaurant products, menu, orders, and settings</p>
       </div>
 
+      {/* Error Alert */}
+      {hasAnyError && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Failed to load some dashboard data. Please refresh the page or check your connection.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Statistics Overview */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         {stats.map((stat) => {
           const Icon = stat.icon;
+          const isLoading = stat.value === '...';
+          const hasError = !!stat.error;
+
           return (
             <Link key={stat.title} to={stat.link}>
               <Card className="transition-all hover:shadow-lg hover:scale-105 cursor-pointer h-full">
@@ -129,7 +151,13 @@ export default function AdminDashboardPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{stat.value}</div>
+                  {isLoading ? (
+                    <Skeleton className="h-9 w-16" />
+                  ) : (
+                    <div className={`text-3xl font-bold ${hasError ? 'text-muted-foreground' : ''}`}>
+                      {stat.value}
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
                 </CardContent>
               </Card>
@@ -190,7 +218,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Getting Started Section */}
-      {(products.length === 0 || categories.length === 0 || menu.length === 0) && (
+      {!isAnyLoading && !hasAnyError && (products.length === 0 || categories.length === 0 || menu.length === 0) && (
         <Card className="mt-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

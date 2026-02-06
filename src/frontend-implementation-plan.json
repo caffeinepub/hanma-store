@@ -1,6 +1,70 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Untitled request",
-  "requirements": []
+  "title": "Admin Dashboard route, protection, and navigation entry point",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Provide a protected /admin route gated to authenticated admin users with an access-denied experience (including login option when logged out).",
+      "acceptanceCriteria": [
+        "Navigating to /admin while logged out shows an access-denied screen with a login option.",
+        "Navigating to /admin while logged in as a non-admin shows an access-denied screen.",
+        "Navigating to /admin while logged in as an admin renders the Admin Dashboard page content without errors."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Confirm the /admin route is registered and wrapped with AdminGuard so it is not directly accessible without admin authorization; ensure routing stays wired correctly for /admin. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/AdminGuard.tsx",
+          "operation": "modify",
+          "description": "Harden admin gating by handling admin-check failures gracefully (e.g., backend authorization failures) and passing a helpful message to AccessDeniedScreen when appropriate; continue to rely on role-based access control patterns from the authorization component. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/AccessDeniedScreen.tsx",
+          "operation": "modify",
+          "description": "Ensure the access-denied UI clearly distinguishes logged-out vs non-admin states and always offers a login action when unauthenticated, plus a safe navigation option away from /admin. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "On the Admin Dashboard page, show high-level admin statistics and clickable navigation tiles/cards to Products, Categories, Menu, Orders, and Settings (Google Reviews).",
+      "acceptanceCriteria": [
+        "Admin Dashboard shows at least: total Products, total Categories, total Menu Items, and total Orders (with loading states while data is fetched).",
+        "Each stat/tile is clickable and routes to the correct admin page (e.g., /admin/products, /admin/categories, /admin/menu, /admin/orders, /admin/google-reviews).",
+        "If any admin data queries fail, the page does not crash and presents a sensible error/loading state."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/admin/AdminDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Implement resilient dashboard data rendering: add explicit loading UI (e.g., skeletons/placeholder cards) for stats while queries are pending, and show per-section or page-level ErrorState when any stats query fails; ensure tiles/cards link to /admin/products, /admin/categories, /admin/menu, /admin/orders, and /admin/google-reviews as required. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Align React Query hooks used by the dashboard to expose consistent error/loading behavior (e.g., avoid returning silent empty arrays when a request fails in contexts where an error state is required) so AdminDashboardPage can reliably show sensible error states. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add an Admin navigation entry point visible only to authenticated admin users (desktop header and mobile nav) linking to /admin.",
+      "acceptanceCriteria": [
+        "When logged in as an admin, the header navigation includes an Admin link that routes to /admin.",
+        "When logged out or logged in as a non-admin, the Admin link is not shown in the header navigation.",
+        "The Admin link is also available in the mobile navigation when applicable."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/nav/Header.tsx",
+          "operation": "modify",
+          "description": "Ensure the Admin navigation link is conditionally rendered only when the user is authenticated and confirmed as admin (using the authorization/role-check flow), in both desktop and mobile navigation, and routes to /admin. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
 }

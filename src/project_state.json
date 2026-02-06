@@ -1,26 +1,45 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project includes a website with a dynamic Menu page backed by an Admin Dashboard/CMS for managing menu items, categories, and products; current priority is restoring missing admin dashboard access and reconnecting it to the menu without changing the site UI.",
-  "architectural_notes": [
-    "Do not regenerate or replace the website UI; this is a backend/admin visibility restoration only.",
-    "Admin Dashboard/CMS must be accessible via builder interface navigation (Admin / Dashboard / CMS).",
-    "Dynamic Menu page content must be sourced from Admin-managed menu items/categories/products."
+  "summary": "Project to build an application including an admin dashboard.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-ensure-an-admin-dashboard-is-available-at-the-route-admin-and-is-protected-so-that-only-authenticated-admin-users-can-access-it-non-admin-or-unauthenticated-users-must-see-an-access-denied-experience",
+      "title": "Ensure an Admin Dashboard is available at the route \"/admin\" and is protected so that only authenticated admin users can access it; non-admin or unauthenticated users must see an access-denied experience.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-on-the-admin-dashboard-page-display-high-level-statistics-and-navigation-tiles-cards-for-key-admin-areas-products-categories-menu-orders-and-settings-such-as-google-reviews-with-each-tile-linking-to-its-respective-admin-page",
+      "title": "On the Admin Dashboard page, display high-level statistics and navigation tiles/cards for key admin areas (Products, Categories, Menu, Orders, and Settings such as Google Reviews), with each tile linking to its respective admin page.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
   ],
-  "known_issues": [
-    "Admin Dashboard / backend management panel is missing from the project UI/builder interface."
-  ],
-  "isFixRequest": true,
-  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Restore missing Admin Dashboard/CMS in builder UI and reconnect it to the dynamic Menu page so admin-managed items appear on the website (no UI redesign)",
+      "summary": "Add an admin dashboard to the application",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Add an Admin entry point in the site navigation that is only visible to authenticated admin users and routes to \"/admin\".",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Untitled request",
+  "projectName": "Add Admin Dashboard (admin home page)",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

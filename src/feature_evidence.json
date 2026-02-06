@@ -1,4 +1,46 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-ensure-an-admin-dashboard-is-available-at-the-route-admin-and-is-protected-so-that-only-authenticated-admin-users-can-access-it-non-admin-or-unauthenticated-users-must-see-an-access-denied-experience",
+      "featureTitle": "Ensure an Admin Dashboard is available at the route \"/admin\" and is protected so that only authenticated admin users can access it; non-admin or unauthenticated users must see an access-denied experience.",
+      "files": [
+        "frontend/src/components/auth/AdminGuard.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-on-the-admin-dashboard-page-display-high-level-statistics-and-navigation-tiles-cards-for-key-admin-areas-products-categories-menu-orders-and-settings-such-as-google-reviews-with-each-tile-linking-to-its-respective-admin-page",
+      "featureTitle": "On the Admin Dashboard page, display high-level statistics and navigation tiles/cards for key admin areas (Products, Categories, Menu, Orders, and Settings such as Google Reviews), with each tile linking to its respective admin page.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/admin/AdminDashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "http-outcalls@3.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

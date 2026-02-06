@@ -1,42 +1,51 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T10:58:38.660Z",
-  "summary": "BuildRequest contains no explicit requirements or acceptance criteria. The diff modifies backend logic and project metadata, adding/expanding menu/admin/user-profile/access-control related functionality despite no requested requirements.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-06T11:04:58.954Z",
+  "summary": "The diff adds an AdminGuard component that checks Internet Identity auth plus an isAdmin query and shows AccessDeniedScreen (with loading skeleton and error handling). It also adds an AdminDashboardPage that displays product/category/menu/order counts with loading/error fallbacks and links to various /admin subpages. However, the diff does not provide evidence that the /admin route is actually registered and wrapped with the guard, and the Google Reviews/settings tile link is truncated so its exact target cannot be verified. There are also unrelated navigation/route changes (e.g., /catalog redirecting to /menu) indicated in the summaries.",
+  "missing_requirements": [
     {
-      "description": "Added/expanded backend domain model and state for products, categories, orders, user profiles, and Google review config.",
-      "reason": "No requirements were provided in the BuildRequest; these appear to be new functionality not requested by the source of truth.",
+      "id": "REQ-1",
+      "requirement": "Ensure an Admin Dashboard is available at the route \"/admin\" and is protected so that only authenticated admin users can access it; non-admin or unauthenticated users must see an access-denied experience.",
+      "reason": "While AdminGuard exists, the diff summary does not show any router configuration that mounts AdminDashboardPage at \"/admin\" and wraps it with AdminGuard; no route file (e.g., App/router setup) is included with evidence of the /admin route protection.",
       "evidence": [
-        "backend/main.mo"
+        "frontend/src/components/auth/AdminGuard.tsx",
+        "frontend/src/pages/admin/AdminDashboardPage.tsx",
+        "frontend-file-summaries.txt (mentions App.tsx but does not show /admin route wiring)"
       ]
     },
     {
-      "description": "Implemented user profile APIs with authorization checks (get/save caller profile, admin/self access rules).",
-      "reason": "Not requested (BuildRequest has no requirements).",
+      "id": "REQ-2",
+      "requirement": "Each stat/tile is clickable and routes to the correct admin page (e.g., /admin/products, /admin/categories, /admin/menu, /admin/orders, /admin/google-reviews).",
+      "reason": "Links for products/categories/menu/orders are visible, but the Google Reviews/settings link target is truncated (\"link: '/admin/\") so the required \"/admin/google-reviews\" destination cannot be confirmed from the provided diff.",
       "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "description": "Implemented/admin-exposed menu seeding function with admin permission enforcement.",
-      "reason": "Not requested (BuildRequest has no requirements).",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "description": "Updated project_state.json to describe a new feature request (AR-1) about restoring Admin Dashboard/CMS and reconnecting it to a dynamic Menu page, including architectural notes/known issues.",
-      "reason": "BuildRequest specifies no requirements; introducing a pending feature request and related constraints is additional scope not present in the provided BuildRequest.",
-      "evidence": [
-        "project_state.json"
+        "frontend/src/pages/admin/AdminDashboardPage.tsx (truncated at Google Reviews link)"
       ]
     }
   ],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "Redirect /catalog route to /menu (canonical menu experience) and associated navigation link updates to /menu.",
+      "reason": "The BuildRequest is specifically about adding an admin dashboard and admin navigation entry; it does not request changing the public menu/catalog routing.",
+      "evidence": [
+        "frontend-file-summaries.txt (App.tsx: \"/catalog route now redirects to /menu\")",
+        "frontend-file-summaries.txt (Footer/HomePage/CartPage/CheckoutPage mention Menu link updates)"
+      ]
+    },
+    {
+      "description": "Additional query behaviors such as verbose console logging, refetchOnWindowFocus, and retry=2 for product catalog queries.",
+      "reason": "The BuildRequest does not ask to adjust query caching/refetch/logging behavior beyond what is needed for the admin dashboard; these changes appear unrelated to the stated requirements.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts (console.error/console.log, refetchOnWindowFocus: true, retry: 2)"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
-    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/auth/AdminGuard.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/admin/AdminDashboardPage.tsx",
     "project_state.json"
   ]
 }

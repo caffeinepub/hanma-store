@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminGuard({ children }: { children: ReactNode }) {
   const { identity, isInitializing } = useInternetIdentity();
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
+  const { data: isAdmin, isLoading: isCheckingAdmin, error } = useIsCallerAdmin();
 
   if (isInitializing || isCheckingAdmin) {
     return (
@@ -16,6 +16,15 @@ export default function AdminGuard({ children }: { children: ReactNode }) {
           <Skeleton className="h-64 w-full" />
         </div>
       </div>
+    );
+  }
+
+  // Handle authorization check errors
+  if (error) {
+    return (
+      <AccessDeniedScreen
+        errorMessage="Failed to verify admin access. Please try logging in again or contact support if the issue persists."
+      />
     );
   }
 

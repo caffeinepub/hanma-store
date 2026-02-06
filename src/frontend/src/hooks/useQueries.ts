@@ -9,7 +9,7 @@ export function useGetAllProducts() {
   return useQuery<SwitchProduct[]>({
     queryKey: ['products'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       const catalog = await actor.getSwitchCatalog();
       return catalog.products;
     },
@@ -41,7 +41,7 @@ export function useGetAllCategories() {
   return useQuery<SwitchCategory[]>({
     queryKey: ['categories'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       const catalog = await actor.getSwitchCatalog();
       return catalog.categories;
     },
@@ -106,7 +106,7 @@ export function useGetMenu() {
   return useQuery<MenuCategory[]>({
     queryKey: ['menu'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       return actor.getMenu();
     },
     enabled: !!actor && !isFetching,
@@ -337,9 +337,15 @@ export function useIsCallerAdmin() {
     queryKey: ['isAdmin'],
     queryFn: async () => {
       if (!actor) return false;
-      return actor.isCallerAdmin();
+      try {
+        return await actor.isCallerAdmin();
+      } catch (error) {
+        console.error('Failed to check admin status:', error);
+        throw error;
+      }
     },
     enabled: !!actor && !isFetching,
+    retry: 1,
   });
 }
 

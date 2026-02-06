@@ -1,21 +1,60 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-06T10:58:38.662Z",
+  "generatedAt": "2026-02-06T11:04:58.957Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 0,
-    "implemented": 0,
-    "items": []
+    "total": 3,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Ensure an Admin Dashboard is available at the route \"/admin\" and is protected so that only authenticated admin users can access it; non-admin or unauthenticated users must see an access-denied experience.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/auth/AdminGuard.tsx",
+          "frontend/src/components/auth/AccessDeniedScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/AdminGuard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "On the Admin Dashboard page, display high-level statistics and navigation tiles/cards for key admin areas (Products, Categories, Menu, Orders, and Settings such as Google Reviews), with each tile linking to its respective admin page.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/admin/AdminDashboardPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/admin/AdminDashboardPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add an Admin entry point in the site navigation that is only visible to authenticated admin users and routes to \"/admin\".",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/nav/Header.tsx"
+        ],
+        "matchedFiles": []
+      }
+    ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/components/auth/AdminGuard.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/admin/AdminDashboardPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
