@@ -1,51 +1,26 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Website draft for CAFE 37 (hangout cafe), including business hours and header branding.",
-  "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
-  "existing_features": [
-    {
-      "id": "feature-update-the-site-branding-title-to-show-the-main-title-text-as-cafe-37-and-the-tagline-subtitle-text-as-the-ultimate-hangout-cafe-wherever-the-caf-name-tagline-is-displayed-e-g-home-hero-header-footer-brand-block-share-text-and-any-tagline-component",
-      "title": "Update the site branding title to show the main title text as \"CAFE 37\" and the tagline/subtitle text as \"The ultimate hangout cafe\" wherever the café name/tagline is displayed (e.g., Home hero, header/footer brand block, share text, and any tagline component).",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-displayed-business-hours-to-match-the-provided-weekly-schedule-friday-sunday-12-pm-12-am-monday-thursday-1-pm-12-am-ensure-this-schedule-is-shown-on-the-contact-page-and-anywhere-else-the-site-currently-displays-hours-closing-time-e-g-footer-and-home-hero-closes-at-line",
-      "title": "Update the displayed business hours to match the provided weekly schedule: Friday–Sunday 12 pm–12 am; Monday–Thursday 1 pm–12 am. Ensure this schedule is shown on the Contact page and anywhere else the site currently displays hours/closing time (e.g., footer and Home hero “Closes at” line).",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-site-level-html-metadata-title-description-frontend-index-html-to-reflect-the-updated-branding-cafe-37-and-the-new-tagline-the-ultimate-hangout-cafe-user-facing-seo-strings-should-be-consistent-with-the-updated-title-tagline",
-      "title": "Update site-level HTML metadata title/description (frontend/index.html) to reflect the updated branding \"CAFE 37\" and the new tagline \"The ultimate hangout cafe\" (user-facing SEO strings should be consistent with the updated title/tagline).",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    }
+  "summary": "Project includes a website with a dynamic Menu page backed by an Admin Dashboard/CMS for managing menu items, categories, and products; current priority is restoring missing admin dashboard access and reconnecting it to the menu without changing the site UI.",
+  "architectural_notes": [
+    "Do not regenerate or replace the website UI; this is a backend/admin visibility restoration only.",
+    "Admin Dashboard/CMS must be accessible via builder interface navigation (Admin / Dashboard / CMS).",
+    "Dynamic Menu page content must be sourced from Admin-managed menu items/categories/products."
   ],
+  "known_issues": [
+    "Admin Dashboard / backend management panel is missing from the project UI/builder interface."
+  ],
+  "isFixRequest": true,
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Update displayed business hours to the provided schedule (Fri–Sun 12pm–12am; Mon–Thu 1pm–12am).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Update site title/hero text to: \"CAFE 37\" and subtitle/tagline: \"The ultimate hangout cafe\".",
+      "summary": "Restore missing Admin Dashboard/CMS in builder UI and reconnect it to the dynamic Menu page so admin-managed items appear on the website (no UI redesign)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "CAFE 37",
+  "projectName": "Untitled request",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

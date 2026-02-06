@@ -7,18 +7,30 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface Category {
-    id: CategoryId;
-    name: string;
+export interface GoogleReviewConfig {
+    fallbackRating: string;
+    placeId: string;
+    apiKey: string;
+}
+export interface TransformationOutput {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
 }
 export type Time = bigint;
+export interface MenuCategory {
+    name: string;
+    items: Array<MenuItem>;
+}
 export interface OrderItem {
-    productId: ProductId;
+    productId: number;
     quantity: number;
     price: number;
 }
-export type CategoryId = number;
-export type ProductId = number;
+export interface ProductCategoryResponse {
+    categories: Array<SwitchCategory>;
+    products: Array<SwitchProduct>;
+}
 export interface Order {
     id: number;
     customerName: string;
@@ -28,17 +40,41 @@ export interface Order {
     items: Array<OrderItem>;
     customerEmail: string;
 }
-export interface UserProfile {
+export interface http_header {
+    value: string;
     name: string;
 }
-export interface Product {
-    id: ProductId;
-    categoryId?: CategoryId;
+export interface http_request_result {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface MenuItem {
     name: string;
     description: string;
     available: boolean;
     imageUrl: string;
     price: number;
+}
+export interface TransformationInput {
+    context: Uint8Array;
+    response: http_request_result;
+}
+export interface SwitchProduct {
+    id: number;
+    categoryId?: number;
+    name: string;
+    description: string;
+    available: boolean;
+    imageUrl: string;
+    price: number;
+}
+export interface SwitchCategory {
+    id: number;
+    name: string;
+}
+export interface UserProfile {
+    name: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -46,29 +82,30 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    adminSeedTestProducts(): Promise<void>;
+    adminSeedMenuItems(): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createCategory(name: string): Promise<CategoryId>;
     createOrder(items: Array<OrderItem>, totalAmount: number, customerName: string, customerEmail: string, customerAddress: string): Promise<number>;
-    createProduct(name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: CategoryId | null): Promise<ProductId>;
-    deleteCategory(categoryId: CategoryId): Promise<void>;
-    deleteProduct(productId: ProductId): Promise<void>;
+    createSwitchCategory(name: string): Promise<number>;
+    createSwitchProduct(name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: number | null): Promise<number>;
+    deleteSwitchCategory(categoryId: number): Promise<void>;
+    deleteSwitchProduct(productId: number): Promise<void>;
+    fetchGoogleRating(): Promise<{
+        fallbackMessage: string;
+        rating?: number;
+        reviewCount?: bigint;
+    }>;
+    getAllOrders(): Promise<Array<Order>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getGoogleReviewConfig(): Promise<GoogleReviewConfig | null>;
+    getMenu(): Promise<Array<MenuCategory>>;
     getOrderById(orderId: number): Promise<Order | null>;
-    getProductById(productId: ProductId): Promise<Product | null>;
-    getProductCatalog(): Promise<{
-        categories: Array<Category>;
-        products: Array<Product>;
-    }>;
+    getSwitchCatalog(): Promise<ProductCategoryResponse>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
-    listAllCategories(): Promise<Array<Category>>;
-    listAllOrders(): Promise<Array<Order>>;
-    listAllProducts(): Promise<Array<Product>>;
-    listAllProductsSortedByPrice(): Promise<Array<Product>>;
-    listProductsByCategory(categoryId: CategoryId): Promise<Array<Product>>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateCategory(categoryId: CategoryId, name: string): Promise<void>;
-    updateProduct(productId: ProductId, name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: CategoryId | null): Promise<void>;
+    transform(input: TransformationInput): Promise<TransformationOutput>;
+    updateGoogleReviewConfig(apiKey: string, placeId: string, fallbackRating: string): Promise<void>;
+    updateSwitchCategory(categoryId: number, name: string): Promise<void>;
+    updateSwitchProduct(productId: number, name: string, description: string, price: number, imageUrl: string, available: boolean, categoryId: number | null): Promise<void>;
 }

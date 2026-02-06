@@ -56,6 +56,10 @@
         @apply border-border;
     }
     
+    html {
+        scroll-behavior: smooth;
+    }
+    
     body {
         @apply bg-background text-foreground antialiased;
         font-feature-settings: "rlig" 1, "calt" 1;
@@ -79,5 +83,21 @@
 
     h4 {
         @apply text-xl lg:text-2xl;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Carousel focus-visible styles for accessibility */
+    .carousel-button:focus-visible {
+        @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
     }
 }

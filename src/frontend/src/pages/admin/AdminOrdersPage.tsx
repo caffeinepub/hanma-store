@@ -54,7 +54,7 @@ export default function AdminOrdersPage() {
                   <TableCell className="font-medium">#{order.id}</TableCell>
                   <TableCell>{order.customerName}</TableCell>
                   <TableCell>{order.items.length} items</TableCell>
-                  <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                  <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
                   <TableCell>{new Date(Number(order.timestamp) / 1000000).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button

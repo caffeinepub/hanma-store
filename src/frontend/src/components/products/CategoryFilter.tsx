@@ -1,13 +1,17 @@
 import { Button } from '@/components/ui/button';
-import type { Category } from '../../backend';
+import type { SwitchCategory } from '../../backend';
 
 interface CategoryFilterProps {
-  categories: Category[];
+  categories: SwitchCategory[];
   selectedCategoryId: number | null;
   onSelectCategory: (categoryId: number | null) => void;
 }
 
-export default function CategoryFilter({ categories, selectedCategoryId, onSelectCategory }: CategoryFilterProps) {
+export default function CategoryFilter({
+  categories,
+  selectedCategoryId,
+  onSelectCategory,
+}: CategoryFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button
@@ -15,7 +19,7 @@ export default function CategoryFilter({ categories, selectedCategoryId, onSelec
         onClick={() => onSelectCategory(null)}
         size="sm"
       >
-        All
+        All Items
       </Button>
       {categories.map((category) => (
         <Button

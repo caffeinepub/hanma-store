@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Clock, Star, Wifi, UtensilsCrossed, Music, MessageCircle } from 'lucide-react';
 import { cafe37Content } from '../content/cafe37';
 import { getFormattedSchedule } from '../utils/businessHours';
+import GoogleRatingSummary from '../components/reviews/GoogleRatingSummary';
 
 export default function ContactPage() {
   const weeklySchedule = getFormattedSchedule();
@@ -158,9 +159,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="mb-1 font-semibold">Rating</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {cafe37Content.rating} stars ({cafe37Content.reviewCount} reviews)
-                      </p>
+                      <GoogleRatingSummary variant="inline" />
                     </div>
                   </div>
                 </CardContent>

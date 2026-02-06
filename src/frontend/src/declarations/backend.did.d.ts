@@ -10,8 +10,19 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface Category { 'id' : CategoryId, 'name' : string }
-export type CategoryId = number;
+export interface GoogleReviewConfig {
+  'fallbackRating' : string,
+  'placeId' : string,
+  'apiKey' : string,
+}
+export interface MenuCategory { 'name' : string, 'items' : Array<MenuItem> }
+export interface MenuItem {
+  'name' : string,
+  'description' : string,
+  'available' : boolean,
+  'imageUrl' : string,
+  'price' : number,
+}
 export interface Order {
   'id' : number,
   'customerName' : string,
@@ -22,59 +33,82 @@ export interface Order {
   'customerEmail' : string,
 }
 export interface OrderItem {
-  'productId' : ProductId,
+  'productId' : number,
   'quantity' : number,
   'price' : number,
 }
-export interface Product {
-  'id' : ProductId,
-  'categoryId' : [] | [CategoryId],
+export interface ProductCategoryResponse {
+  'categories' : Array<SwitchCategory>,
+  'products' : Array<SwitchProduct>,
+}
+export interface SwitchCategory { 'id' : number, 'name' : string }
+export interface SwitchProduct {
+  'id' : number,
+  'categoryId' : [] | [number],
   'name' : string,
   'description' : string,
   'available' : boolean,
   'imageUrl' : string,
   'price' : number,
 }
-export type ProductId = number;
 export type Time = bigint;
+export interface TransformationInput {
+  'context' : Uint8Array,
+  'response' : http_request_result,
+}
+export interface TransformationOutput {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface http_header { 'value' : string, 'name' : string }
+export interface http_request_result {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'adminSeedTestProducts' : ActorMethod<[], undefined>,
+  'adminSeedMenuItems' : ActorMethod<[], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createCategory' : ActorMethod<[string], CategoryId>,
   'createOrder' : ActorMethod<
     [Array<OrderItem>, number, string, string, string],
     number
   >,
-  'createProduct' : ActorMethod<
-    [string, string, number, string, boolean, [] | [CategoryId]],
-    ProductId
+  'createSwitchCategory' : ActorMethod<[string], number>,
+  'createSwitchProduct' : ActorMethod<
+    [string, string, number, string, boolean, [] | [number]],
+    number
   >,
-  'deleteCategory' : ActorMethod<[CategoryId], undefined>,
-  'deleteProduct' : ActorMethod<[ProductId], undefined>,
+  'deleteSwitchCategory' : ActorMethod<[number], undefined>,
+  'deleteSwitchProduct' : ActorMethod<[number], undefined>,
+  'fetchGoogleRating' : ActorMethod<
+    [],
+    {
+      'fallbackMessage' : string,
+      'rating' : [] | [number],
+      'reviewCount' : [] | [bigint],
+    }
+  >,
+  'getAllOrders' : ActorMethod<[], Array<Order>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getGoogleReviewConfig' : ActorMethod<[], [] | [GoogleReviewConfig]>,
+  'getMenu' : ActorMethod<[], Array<MenuCategory>>,
   'getOrderById' : ActorMethod<[number], [] | [Order]>,
-  'getProductById' : ActorMethod<[ProductId], [] | [Product]>,
-  'getProductCatalog' : ActorMethod<
-    [],
-    { 'categories' : Array<Category>, 'products' : Array<Product> }
-  >,
+  'getSwitchCatalog' : ActorMethod<[], ProductCategoryResponse>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'listAllCategories' : ActorMethod<[], Array<Category>>,
-  'listAllOrders' : ActorMethod<[], Array<Order>>,
-  'listAllProducts' : ActorMethod<[], Array<Product>>,
-  'listAllProductsSortedByPrice' : ActorMethod<[], Array<Product>>,
-  'listProductsByCategory' : ActorMethod<[CategoryId], Array<Product>>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateCategory' : ActorMethod<[CategoryId, string], undefined>,
-  'updateProduct' : ActorMethod<
-    [ProductId, string, string, number, string, boolean, [] | [CategoryId]],
+  'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
+  'updateGoogleReviewConfig' : ActorMethod<[string, string, string], undefined>,
+  'updateSwitchCategory' : ActorMethod<[number, string], undefined>,
+  'updateSwitchProduct' : ActorMethod<
+    [number, string, string, number, string, boolean, [] | [number]],
     undefined
   >,
 }

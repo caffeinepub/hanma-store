@@ -1,14 +1,14 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Product } from '../backend';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { SwitchProduct } from '../backend';
 
-export interface CartItem {
-  product: Product;
+interface CartItem {
+  product: SwitchProduct;
   quantity: number;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, quantity?: number) => void;
+  addItem: (product: SwitchProduct, quantity?: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
@@ -18,32 +18,24 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const CART_STORAGE_KEY = 'hanma-store-cart';
-
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const stored = localStorage.getItem(CART_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
+    const saved = localStorage.getItem('cart');
+    return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.error('Failed to save cart:', error);
-    }
+    localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const addItem = (product: Product, quantity = 1) => {
+  const addItem = (product: SwitchProduct, quantity: number = 1) => {
     setItems((current) => {
       const existing = current.find((item) => item.product.id === product.id);
       if (existing) {
         return current.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
         );
       }
       return [...current, { product, quantity }];
@@ -60,7 +52,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     setItems((current) =>
-      current.map((item) => (item.product.id === productId ? { ...item, quantity } : item))
+      current.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item
+      )
     );
   };
 
@@ -69,7 +63,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const totalAmount = items.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider

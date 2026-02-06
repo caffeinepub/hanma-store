@@ -1,25 +1,16 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { useGetProductById } from '../hooks/useQueries';
-import { useCart } from '../cart/CartProvider';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import ErrorState from '../components/states/ErrorState';
-import { ShoppingCart, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { ArrowLeft } from 'lucide-react';
+import OrderViaContactCTA from '../components/orders/OrderViaContactCTA';
 
 export default function ProductDetailsPage() {
   const { productId } = useParams({ from: '/product/$productId' });
   const navigate = useNavigate();
   const { data: product, isLoading, error, refetch } = useGetProductById(Number(productId));
-  const { addItem } = useCart();
-
-  const handleAddToCart = () => {
-    if (product) {
-      addItem(product);
-      toast.success(`${product.name} added to cart`);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -71,7 +62,7 @@ export default function ProductDetailsPage() {
             {!product.available && <Badge variant="secondary">Out of stock</Badge>}
           </div>
 
-          <p className="mb-8 text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
+          <p className="mb-8 text-3xl font-bold text-primary">₹{product.price.toFixed(2)}</p>
 
           <div className="mb-10">
             <h2 className="mb-3 text-xl font-bold">Description</h2>
@@ -81,10 +72,7 @@ export default function ProductDetailsPage() {
           </div>
 
           <div className="mt-auto">
-            <Button onClick={handleAddToCart} disabled={!product.available} size="lg" className="w-full shadow-glow">
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              {product.available ? 'Add to Cart' : 'Out of Stock'}
-            </Button>
+            <OrderViaContactCTA disabled={!product.available} productName={product.name} />
           </div>
         </div>
       </div>

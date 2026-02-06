@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 import Header from './components/nav/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
-import CatalogPage from './pages/CatalogPage';
+import MenuRedirectPage from './pages/MenuRedirectPage';
+import TextMenuPage from './pages/TextMenuPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -16,6 +17,8 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminOrderDetailsPage from './pages/admin/AdminOrderDetailsPage';
+import AdminGoogleReviewsPage from './pages/admin/AdminGoogleReviewsPage';
+import AdminEditMenuPage from './pages/admin/AdminEditMenuPage';
 import AdminGuard from './components/auth/AdminGuard';
 import { CartProvider } from './cart/CartProvider';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
@@ -53,7 +56,13 @@ const indexRoute = createRoute({
 const catalogRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/catalog',
-  component: CatalogPage,
+  component: MenuRedirectPage,
+});
+
+const menuRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/menu',
+  component: TextMenuPage,
 });
 
 const productRoute = createRoute({
@@ -136,9 +145,30 @@ const adminOrderDetailsRoute = createRoute({
   ),
 });
 
+const adminGoogleReviewsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/google-reviews',
+  component: () => (
+    <AdminGuard>
+      <AdminGoogleReviewsPage />
+    </AdminGuard>
+  ),
+});
+
+const adminEditMenuRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/menu',
+  component: () => (
+    <AdminGuard>
+      <AdminEditMenuPage />
+    </AdminGuard>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   catalogRoute,
+  menuRoute,
   productRoute,
   cartRoute,
   checkoutRoute,
@@ -149,6 +179,8 @@ const routeTree = rootRoute.addChildren([
   adminCategoriesRoute,
   adminOrdersRoute,
   adminOrderDetailsRoute,
+  adminGoogleReviewsRoute,
+  adminEditMenuRoute,
 ]);
 
 const router = createRouter({ routeTree });

@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router';
-import { Heart, Phone, MapPin, Clock, Star } from 'lucide-react';
+import { Phone, MapPin, Clock } from 'lucide-react';
 import { SiFacebook, SiX, SiInstagram } from 'react-icons/si';
 import { cafe37Content } from '../../content/cafe37';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import GoogleRatingSummary from '../reviews/GoogleRatingSummary';
 
 export default function Footer() {
   const handleShare = (platform: string) => {
@@ -59,10 +60,7 @@ export default function Footer() {
                 <Clock className="h-4 w-4 shrink-0" />
                 <span>{cafe37Content.status} · {cafe37Content.todayHours}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 fill-primary text-primary shrink-0" />
-                <span>{cafe37Content.rating} ({cafe37Content.reviewCount} Reviews)</span>
-              </div>
+              <GoogleRatingSummary variant="footer" />
             </div>
           </div>
 
@@ -75,7 +73,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/catalog" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link to="/menu" className="text-muted-foreground transition-colors hover:text-primary">
                   Menu
                 </Link>
               </li>
@@ -131,20 +129,6 @@ export default function Footer() {
               </Button>
             </div>
           </div>
-        </div>
-
-        <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p className="flex items-center justify-center gap-1.5">
-            © 2026. Built with <Heart className="h-4 w-4 fill-primary text-primary" /> using{' '}
-            <a 
-              href="https://caffeine.ai" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="font-semibold text-primary transition-colors hover:text-primary/80"
-            >
-              caffeine.ai
-            </a>
-          </p>
         </div>
       </div>
     </footer>

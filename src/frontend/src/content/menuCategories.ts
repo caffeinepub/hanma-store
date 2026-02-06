@@ -1,3 +1,7 @@
+// NOTE: This file contains legacy menu category definitions for reference only.
+// The public menu (TextMenuPage) now syncs directly from admin-managed Categories and Products.
+// These hardcoded categories are no longer used for public menu rendering.
+
 export const menuCategories = [
   { id: 'all-day-breakfast', name: 'All Day Breakfast', order: 1 },
   { id: 'drinks-soft', name: 'Drinks - Soft Corner', order: 2 },

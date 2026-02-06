@@ -1,46 +1,42 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-05T19:58:43.441Z",
-  "summary": "Branding and hours content were centralized via `cafe37Content` and a new `businessHours` utility, and HTML metadata was updated. However, the diff summary also indicates many unrelated UI/admin/catalog changes that exceed the stated non-goals, and the Contact page’s full weekly hours display cannot be confirmed from the truncated snippet.",
-  "missing_requirements": [
-    {
-      "id": "REQ-2",
-      "requirement": "Contact page “Hours” section displays the full weekly schedule with the exact times provided for each day.",
-      "reason": "`ContactPage.tsx` is truncated before any explicit “Hours” section rendering is shown. While `getFormattedSchedule()` is imported and called, the diff summary does not provide evidence that the weekly schedule is actually rendered on the page with the required formatting.",
-      "evidence": [
-        "frontend/src/pages/ContactPage.tsx (truncated)"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-06T10:58:38.660Z",
+  "summary": "BuildRequest contains no explicit requirements or acceptance criteria. The diff modifies backend logic and project metadata, adding/expanding menu/admin/user-profile/access-control related functionality despite no requested requirements.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "Broad changes to menu/catalog/admin functionality and styling (e.g., CRUD pages, seeding hooks, ₹ pricing, checkout/cart/product detail redesign) beyond updating branding text and business hours.",
-      "reason": "The BuildRequest explicitly lists as non-goals: “No changes to menu/catalog/admin functionality beyond updating displayed branding text and hours content.” The diff summary indicates many such changes in `frontend-file-summaries.txt`.",
+      "description": "Added/expanded backend domain model and state for products, categories, orders, user profiles, and Google review config.",
+      "reason": "No requirements were provided in the BuildRequest; these appear to be new functionality not requested by the source of truth.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "backend/main.mo"
       ]
     },
     {
-      "description": "Addition of new About/Contact routes and related page content (beyond hours/branding).",
-      "reason": "Not requested by the BuildRequest; the request is limited to branding text, business hours display, and HTML metadata updates.",
+      "description": "Implemented user profile APIs with authorization checks (get/save caller profile, admin/self access rules).",
+      "reason": "Not requested (BuildRequest has no requirements).",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Implemented/admin-exposed menu seeding function with admin permission enforcement.",
+      "reason": "Not requested (BuildRequest has no requirements).",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Updated project_state.json to describe a new feature request (AR-1) about restoring Admin Dashboard/CMS and reconnecting it to a dynamic Menu page, including architectural notes/known issues.",
+      "reason": "BuildRequest specifies no requirements; introducing a pending feature request and related constraints is additional scope not present in the provided BuildRequest.",
+      "evidence": [
+        "project_state.json"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.78,
   "changed_files": [
-    "frontend-file-summaries.txt",
-    "frontend/index.html",
-    "frontend/src/components/brand/PremiumTagline.tsx",
-    "frontend/src/components/layout/Footer.tsx",
-    "frontend/src/components/nav/Header.tsx",
-    "frontend/src/content/cafe37.ts",
-    "frontend/src/pages/AboutPage.tsx",
-    "frontend/src/pages/ContactPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/utils/businessHours.ts",
+    "backend/main.mo",
     "project_state.json"
   ]
 }

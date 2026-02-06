@@ -1,15 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from '@tanstack/react-router';
-import { Phone, MessageCircle, MapPin, ShoppingBag, Star, Music, Wifi, UtensilsCrossed } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Music, Wifi, UtensilsCrossed } from 'lucide-react';
 import { cafe37Content } from '../content/cafe37';
-import { toast } from 'sonner';
+import GoogleRatingSummary from '../components/reviews/GoogleRatingSummary';
+import CatalogOnlyMessage from '../components/catalog/CatalogOnlyMessage';
+import HomePromoCarousel from '../components/home/HomePromoCarousel';
 
 export default function HomePage() {
   const navigate = useNavigate();
-
-  const handleOrderOnline = () => {
-    toast.info('Online ordering coming soon! Visit us in person or call to place your order.');
-  };
 
   return (
     <div className="flex flex-col">
@@ -17,11 +15,8 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
             <div className="flex flex-col animate-fade-in">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary w-fit">
-                <Star className="h-4 w-4 fill-primary" />
-                {cafe37Content.rating} ({cafe37Content.reviewCount} Reviews)
-              </div>
-              <h1 className="mb-4 font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
+              <GoogleRatingSummary variant="hero" />
+              <h1 className="mt-4 mb-4 font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
                 {cafe37Content.name}
               </h1>
               <p className="mb-8 text-xl text-muted-foreground md:text-2xl max-w-xl">
@@ -30,6 +25,11 @@ export default function HomePage() {
               <p className="mb-8 text-lg text-muted-foreground">
                 {cafe37Content.priceRange} · {cafe37Content.status} · {cafe37Content.todayHours}
               </p>
+              
+              <div className="mb-6">
+                <CatalogOnlyMessage />
+              </div>
+
               <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
                 <Button size="lg" asChild className="shadow-glow">
                   <a href={cafe37Content.phoneLink}>
@@ -49,19 +49,10 @@ export default function HomePage() {
                     Directions
                   </a>
                 </Button>
-                <Button size="lg" variant="secondary" onClick={handleOrderOnline}>
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Order Online
-                  <span className="ml-2 text-xs">(Coming Soon)</span>
-                </Button>
               </div>
             </div>
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl shadow-soft lg:aspect-auto lg:h-[500px]">
-              <img
-                src="/assets/generated/cafe37-hero.dim_1600x900.png"
-                alt={`${cafe37Content.name} - Premium café atmosphere`}
-                className="h-full w-full object-cover"
-              />
+            <div className="relative">
+              <HomePromoCarousel />
             </div>
           </div>
         </div>
@@ -75,7 +66,7 @@ export default function HomePage() {
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {cafe37Content.highlights.map((highlight, index) => {
-              const icons = [UtensilsCrossed, Star, Music];
+              const icons = [UtensilsCrossed, Music, Wifi];
               const Icon = icons[index];
               const colors = ['primary', 'secondary', 'accent'];
               const color = colors[index];
@@ -100,20 +91,10 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="mb-16 text-center">
             <h2 className="mb-4 font-display text-4xl font-bold">What Our Customers Say</h2>
-            <p className="text-lg text-muted-foreground">Real reviews from real people</p>
+            <p className="text-lg text-muted-foreground mb-8">Hear from our happy customers</p>
           </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {cafe37Content.testimonials.map((testimonial, index) => (
-              <div key={index} className="rounded-2xl border border-border bg-card p-6">
-                <div className="mb-4 flex items-center gap-1">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="mb-4 text-muted-foreground italic">"{testimonial.text}"</p>
-                <p className="font-semibold">— {testimonial.name}</p>
-              </div>
-            ))}
+          <div className="max-w-2xl mx-auto">
+            <GoogleRatingSummary variant="section" showLink />
           </div>
         </div>
       </section>
@@ -140,7 +121,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" onClick={() => navigate({ to: '/catalog' })} className="shadow-glow">
+              <Button size="lg" onClick={() => navigate({ to: '/menu' })} className="shadow-glow">
                 View Menu
               </Button>
               <Button size="lg" variant="outline" onClick={() => navigate({ to: '/contact' })}>

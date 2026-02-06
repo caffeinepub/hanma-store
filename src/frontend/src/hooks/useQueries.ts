@@ -1,67 +1,79 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import type { Product, Category, Order, UserProfile, OrderItem } from '../backend';
+import type { SwitchProduct, SwitchCategory, UserProfile, OrderItem, GoogleReviewConfig, MenuCategory, Order } from '../backend';
 
 export function useGetAllProducts() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<Product[]>({
+  return useQuery<SwitchProduct[]>({
     queryKey: ['products'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listAllProducts();
+      const catalog = await actor.getSwitchCatalog();
+      return catalog.products;
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
 export function useGetProductById(productId: number | undefined) {
   const { actor, isFetching } = useActor();
 
-  return useQuery<Product | null>({
+  return useQuery<SwitchProduct | null>({
     queryKey: ['product', productId],
     queryFn: async () => {
       if (!actor || productId === undefined) return null;
-      return actor.getProductById(productId);
+      const catalog = await actor.getSwitchCatalog();
+      return catalog.products.find(p => p.id === productId) || null;
     },
     enabled: !!actor && !isFetching && productId !== undefined,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
 export function useGetAllCategories() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<Category[]>({
+  return useQuery<SwitchCategory[]>({
     queryKey: ['categories'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listAllCategories();
+      const catalog = await actor.getSwitchCatalog();
+      return catalog.categories;
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
 export function useGetProductsByCategory(categoryId: number | null) {
   const { actor, isFetching } = useActor();
 
-  return useQuery<Product[]>({
+  return useQuery<SwitchProduct[]>({
     queryKey: ['products', 'category', categoryId],
     queryFn: async () => {
       if (!actor) return [];
+      const catalog = await actor.getSwitchCatalog();
       if (categoryId === null) {
-        return actor.listAllProducts();
+        return catalog.products;
       }
-      return actor.listProductsByCategory(categoryId);
+      return catalog.products.filter(p => p.categoryId === categoryId);
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
 export function useGetProductCatalog() {
   const { actor, isFetching } = useActor();
 
-  return useQuery<{ categories: Category[]; products: Product[] }>({
+  return useQuery<{ categories: SwitchCategory[]; products: SwitchProduct[] }>({
     queryKey: ['productCatalog'],
     queryFn: async () => {
       if (!actor) {
@@ -69,7 +81,7 @@ export function useGetProductCatalog() {
         return { categories: [], products: [] };
       }
       try {
-        const catalog = await actor.getProductCatalog();
+        const catalog = await actor.getSwitchCatalog();
         console.log('Product catalog loaded successfully:', {
           categoriesCount: catalog.categories.length,
           productsCount: catalog.products.length,
@@ -81,7 +93,23 @@ export function useGetProductCatalog() {
       }
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
     retry: 2,
+  });
+}
+
+export function useGetMenu() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<MenuCategory[]>({
+    queryKey: ['menu'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getMenu();
+    },
+    enabled: !!actor && !isFetching,
   });
 }
 
@@ -118,8 +146,8 @@ export function useGetAllOrders() {
   return useQuery<Order[]>({
     queryKey: ['orders'],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.listAllOrders();
+      if (!actor) throw new Error('Actor not available');
+      return actor.getAllOrders();
     },
     enabled: !!actor && !isFetching,
   });
@@ -159,7 +187,7 @@ export function useCreateProduct() {
       categoryId: number | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createProduct(name, description, price, imageUrl, available, categoryId);
+      return actor.createSwitchProduct(name, description, price, imageUrl, available, categoryId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -191,7 +219,7 @@ export function useUpdateProduct() {
       categoryId: number | null;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateProduct(productId, name, description, price, imageUrl, available, categoryId);
+      return actor.updateSwitchProduct(productId, name, description, price, imageUrl, available, categoryId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -207,7 +235,7 @@ export function useDeleteProduct() {
   return useMutation({
     mutationFn: async (productId: number) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.deleteProduct(productId);
+      return actor.deleteSwitchProduct(productId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -223,7 +251,7 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: async (name: string) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createCategory(name);
+      return actor.createSwitchCategory(name);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -239,7 +267,7 @@ export function useUpdateCategory() {
   return useMutation({
     mutationFn: async ({ categoryId, name }: { categoryId: number; name: string }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateCategory(categoryId, name);
+      return actor.updateSwitchCategory(categoryId, name);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -255,7 +283,7 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: async (categoryId: number) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.deleteCategory(categoryId);
+      return actor.deleteSwitchCategory(categoryId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -322,11 +350,94 @@ export function useAdminSeedTestProducts() {
   return useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.adminSeedTestProducts();
+      return actor.adminSeedMenuItems();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['productCatalog'] });
+      queryClient.invalidateQueries({ queryKey: ['menu'] });
+    },
+  });
+}
+
+export function useAdminSeedMenuItems() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.adminSeedMenuItems();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menu'] });
+    },
+  });
+}
+
+export function useFetchGoogleRating() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<{
+    rating: number | null;
+    reviewCount: bigint | null;
+    fallbackMessage: string;
+  }>({
+    queryKey: ['googleRating'],
+    queryFn: async () => {
+      if (!actor) {
+        return {
+          rating: null,
+          reviewCount: null,
+          fallbackMessage: '4.5+ rating on Google with hundreds of happy customers.',
+        };
+      }
+      const result = await actor.fetchGoogleRating();
+      return {
+        rating: result.rating ?? null,
+        reviewCount: result.reviewCount ?? null,
+        fallbackMessage: result.fallbackMessage,
+      };
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useGetGoogleReviewConfig() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<GoogleReviewConfig | null>({
+    queryKey: ['googleReviewConfig'],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getGoogleReviewConfig();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useUpdateGoogleReviewConfig() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      apiKey,
+      placeId,
+      fallbackRating,
+    }: {
+      apiKey: string;
+      placeId: string;
+      fallbackRating: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateGoogleReviewConfig(apiKey, placeId, fallbackRating);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['googleReviewConfig'] });
+      queryClient.invalidateQueries({ queryKey: ['googleRating'] });
     },
   });
 }

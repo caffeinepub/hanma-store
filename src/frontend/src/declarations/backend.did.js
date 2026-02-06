@@ -13,14 +13,11 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const CategoryId = IDL.Nat32;
-export const ProductId = IDL.Nat32;
 export const OrderItem = IDL.Record({
-  'productId' : ProductId,
+  'productId' : IDL.Nat32,
   'quantity' : IDL.Nat32,
   'price' : IDL.Float64,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const Time = IDL.Int;
 export const Order = IDL.Record({
   'id' : IDL.Nat32,
@@ -31,81 +28,121 @@ export const Order = IDL.Record({
   'items' : IDL.Vec(OrderItem),
   'customerEmail' : IDL.Text,
 });
-export const Product = IDL.Record({
-  'id' : ProductId,
-  'categoryId' : IDL.Opt(CategoryId),
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const GoogleReviewConfig = IDL.Record({
+  'fallbackRating' : IDL.Text,
+  'placeId' : IDL.Text,
+  'apiKey' : IDL.Text,
+});
+export const MenuItem = IDL.Record({
   'name' : IDL.Text,
   'description' : IDL.Text,
   'available' : IDL.Bool,
   'imageUrl' : IDL.Text,
   'price' : IDL.Float64,
 });
-export const Category = IDL.Record({ 'id' : CategoryId, 'name' : IDL.Text });
+export const MenuCategory = IDL.Record({
+  'name' : IDL.Text,
+  'items' : IDL.Vec(MenuItem),
+});
+export const SwitchCategory = IDL.Record({
+  'id' : IDL.Nat32,
+  'name' : IDL.Text,
+});
+export const SwitchProduct = IDL.Record({
+  'id' : IDL.Nat32,
+  'categoryId' : IDL.Opt(IDL.Nat32),
+  'name' : IDL.Text,
+  'description' : IDL.Text,
+  'available' : IDL.Bool,
+  'imageUrl' : IDL.Text,
+  'price' : IDL.Float64,
+});
+export const ProductCategoryResponse = IDL.Record({
+  'categories' : IDL.Vec(SwitchCategory),
+  'products' : IDL.Vec(SwitchProduct),
+});
+export const http_header = IDL.Record({
+  'value' : IDL.Text,
+  'name' : IDL.Text,
+});
+export const http_request_result = IDL.Record({
+  'status' : IDL.Nat,
+  'body' : IDL.Vec(IDL.Nat8),
+  'headers' : IDL.Vec(http_header),
+});
+export const TransformationInput = IDL.Record({
+  'context' : IDL.Vec(IDL.Nat8),
+  'response' : http_request_result,
+});
+export const TransformationOutput = IDL.Record({
+  'status' : IDL.Nat,
+  'body' : IDL.Vec(IDL.Nat8),
+  'headers' : IDL.Vec(http_header),
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'adminSeedTestProducts' : IDL.Func([], [], []),
+  'adminSeedMenuItems' : IDL.Func([], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
   'createOrder' : IDL.Func(
       [IDL.Vec(OrderItem), IDL.Float64, IDL.Text, IDL.Text, IDL.Text],
       [IDL.Nat32],
       [],
     ),
-  'createProduct' : IDL.Func(
-      [
-        IDL.Text,
-        IDL.Text,
-        IDL.Float64,
-        IDL.Text,
-        IDL.Bool,
-        IDL.Opt(CategoryId),
-      ],
-      [ProductId],
+  'createSwitchCategory' : IDL.Func([IDL.Text], [IDL.Nat32], []),
+  'createSwitchProduct' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Float64, IDL.Text, IDL.Bool, IDL.Opt(IDL.Nat32)],
+      [IDL.Nat32],
       [],
     ),
-  'deleteCategory' : IDL.Func([CategoryId], [], []),
-  'deleteProduct' : IDL.Func([ProductId], [], []),
-  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
-  'getProductById' : IDL.Func([ProductId], [IDL.Opt(Product)], ['query']),
-  'getProductCatalog' : IDL.Func(
+  'deleteSwitchCategory' : IDL.Func([IDL.Nat32], [], []),
+  'deleteSwitchProduct' : IDL.Func([IDL.Nat32], [], []),
+  'fetchGoogleRating' : IDL.Func(
       [],
       [
         IDL.Record({
-          'categories' : IDL.Vec(Category),
-          'products' : IDL.Vec(Product),
+          'fallbackMessage' : IDL.Text,
+          'rating' : IDL.Opt(IDL.Float64),
+          'reviewCount' : IDL.Opt(IDL.Nat),
         }),
       ],
+      [],
+    ),
+  'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getGoogleReviewConfig' : IDL.Func(
+      [],
+      [IDL.Opt(GoogleReviewConfig)],
       ['query'],
     ),
+  'getMenu' : IDL.Func([], [IDL.Vec(MenuCategory)], ['query']),
+  'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
+  'getSwitchCatalog' : IDL.Func([], [ProductCategoryResponse], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'listAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-  'listAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
-  'listAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-  'listAllProductsSortedByPrice' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-  'listProductsByCategory' : IDL.Func(
-      [CategoryId],
-      [IDL.Vec(Product)],
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'transform' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
       ['query'],
     ),
-  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateCategory' : IDL.Func([CategoryId, IDL.Text], [], []),
-  'updateProduct' : IDL.Func(
+  'updateGoogleReviewConfig' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'updateSwitchCategory' : IDL.Func([IDL.Nat32, IDL.Text], [], []),
+  'updateSwitchProduct' : IDL.Func(
       [
-        ProductId,
+        IDL.Nat32,
         IDL.Text,
         IDL.Text,
         IDL.Float64,
         IDL.Text,
         IDL.Bool,
-        IDL.Opt(CategoryId),
+        IDL.Opt(IDL.Nat32),
       ],
       [],
       [],
@@ -120,14 +157,11 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const CategoryId = IDL.Nat32;
-  const ProductId = IDL.Nat32;
   const OrderItem = IDL.Record({
-    'productId' : ProductId,
+    'productId' : IDL.Nat32,
     'quantity' : IDL.Nat32,
     'price' : IDL.Float64,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
   const Time = IDL.Int;
   const Order = IDL.Record({
     'id' : IDL.Nat32,
@@ -138,85 +172,126 @@ export const idlFactory = ({ IDL }) => {
     'items' : IDL.Vec(OrderItem),
     'customerEmail' : IDL.Text,
   });
-  const Product = IDL.Record({
-    'id' : ProductId,
-    'categoryId' : IDL.Opt(CategoryId),
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const GoogleReviewConfig = IDL.Record({
+    'fallbackRating' : IDL.Text,
+    'placeId' : IDL.Text,
+    'apiKey' : IDL.Text,
+  });
+  const MenuItem = IDL.Record({
     'name' : IDL.Text,
     'description' : IDL.Text,
     'available' : IDL.Bool,
     'imageUrl' : IDL.Text,
     'price' : IDL.Float64,
   });
-  const Category = IDL.Record({ 'id' : CategoryId, 'name' : IDL.Text });
+  const MenuCategory = IDL.Record({
+    'name' : IDL.Text,
+    'items' : IDL.Vec(MenuItem),
+  });
+  const SwitchCategory = IDL.Record({ 'id' : IDL.Nat32, 'name' : IDL.Text });
+  const SwitchProduct = IDL.Record({
+    'id' : IDL.Nat32,
+    'categoryId' : IDL.Opt(IDL.Nat32),
+    'name' : IDL.Text,
+    'description' : IDL.Text,
+    'available' : IDL.Bool,
+    'imageUrl' : IDL.Text,
+    'price' : IDL.Float64,
+  });
+  const ProductCategoryResponse = IDL.Record({
+    'categories' : IDL.Vec(SwitchCategory),
+    'products' : IDL.Vec(SwitchProduct),
+  });
+  const http_header = IDL.Record({ 'value' : IDL.Text, 'name' : IDL.Text });
+  const http_request_result = IDL.Record({
+    'status' : IDL.Nat,
+    'body' : IDL.Vec(IDL.Nat8),
+    'headers' : IDL.Vec(http_header),
+  });
+  const TransformationInput = IDL.Record({
+    'context' : IDL.Vec(IDL.Nat8),
+    'response' : http_request_result,
+  });
+  const TransformationOutput = IDL.Record({
+    'status' : IDL.Nat,
+    'body' : IDL.Vec(IDL.Nat8),
+    'headers' : IDL.Vec(http_header),
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'adminSeedTestProducts' : IDL.Func([], [], []),
+    'adminSeedMenuItems' : IDL.Func([], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createCategory' : IDL.Func([IDL.Text], [CategoryId], []),
     'createOrder' : IDL.Func(
         [IDL.Vec(OrderItem), IDL.Float64, IDL.Text, IDL.Text, IDL.Text],
         [IDL.Nat32],
         [],
       ),
-    'createProduct' : IDL.Func(
+    'createSwitchCategory' : IDL.Func([IDL.Text], [IDL.Nat32], []),
+    'createSwitchProduct' : IDL.Func(
         [
           IDL.Text,
           IDL.Text,
           IDL.Float64,
           IDL.Text,
           IDL.Bool,
-          IDL.Opt(CategoryId),
+          IDL.Opt(IDL.Nat32),
         ],
-        [ProductId],
+        [IDL.Nat32],
         [],
       ),
-    'deleteCategory' : IDL.Func([CategoryId], [], []),
-    'deleteProduct' : IDL.Func([ProductId], [], []),
-    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
-    'getProductById' : IDL.Func([ProductId], [IDL.Opt(Product)], ['query']),
-    'getProductCatalog' : IDL.Func(
+    'deleteSwitchCategory' : IDL.Func([IDL.Nat32], [], []),
+    'deleteSwitchProduct' : IDL.Func([IDL.Nat32], [], []),
+    'fetchGoogleRating' : IDL.Func(
         [],
         [
           IDL.Record({
-            'categories' : IDL.Vec(Category),
-            'products' : IDL.Vec(Product),
+            'fallbackMessage' : IDL.Text,
+            'rating' : IDL.Opt(IDL.Float64),
+            'reviewCount' : IDL.Opt(IDL.Nat),
           }),
         ],
+        [],
+      ),
+    'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getGoogleReviewConfig' : IDL.Func(
+        [],
+        [IDL.Opt(GoogleReviewConfig)],
         ['query'],
       ),
+    'getMenu' : IDL.Func([], [IDL.Vec(MenuCategory)], ['query']),
+    'getOrderById' : IDL.Func([IDL.Nat32], [IDL.Opt(Order)], ['query']),
+    'getSwitchCatalog' : IDL.Func([], [ProductCategoryResponse], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'listAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-    'listAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
-    'listAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
-    'listAllProductsSortedByPrice' : IDL.Func(
-        [],
-        [IDL.Vec(Product)],
-        ['query'],
-      ),
-    'listProductsByCategory' : IDL.Func(
-        [CategoryId],
-        [IDL.Vec(Product)],
-        ['query'],
-      ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateCategory' : IDL.Func([CategoryId, IDL.Text], [], []),
-    'updateProduct' : IDL.Func(
+    'transform' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'updateGoogleReviewConfig' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [],
+        [],
+      ),
+    'updateSwitchCategory' : IDL.Func([IDL.Nat32, IDL.Text], [], []),
+    'updateSwitchProduct' : IDL.Func(
         [
-          ProductId,
+          IDL.Nat32,
           IDL.Text,
           IDL.Text,
           IDL.Float64,
           IDL.Text,
           IDL.Bool,
-          IDL.Opt(CategoryId),
+          IDL.Opt(IDL.Nat32),
         ],
         [],
         [],

@@ -64,8 +64,8 @@ export default function AdminOrderDetailsPage() {
                       <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
-                      <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                      <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)} each</p>
                     </div>
                   </div>
                 ))}
@@ -73,7 +73,7 @@ export default function AdminOrderDetailsPage() {
               <div className="mt-6 border-t border-border pt-4">
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span>${order.totalAmount.toFixed(2)}</span>
+                  <span>₹{order.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>
